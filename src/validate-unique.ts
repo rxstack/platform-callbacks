@@ -2,7 +2,6 @@ import {
   ApiOperationCallback,
   ApiOperationEvent,
   OperationEventsEnum,
-  OperationTypesEnum,
   WriteOperationMetadata
 } from '@rxstack/platform';
 import {BadRequestException} from '@rxstack/exceptions';
@@ -23,37 +22,52 @@ export const validateUnique = (options: ValidateUniqueOptions): ApiOperationCall
     }
     const data = event.getData();
     const body = _.isObject(event.request.body) ? event.request.body : { };
-    const criteria = { };
+    const criteria = buildCriteria(body, options.properties);
 
-    options.properties.forEach(field => {
-      if (!body[field]) {
-        throw new BadRequestException(`ValidateUnique : missing property: ${field}`);
-      }
-      criteria[field] = { '$eq': body[field] };
-    });
-
-    const message: string = options.message || 'validation.not_unique';
     const method = options.method || 'findMany';
     const service = event.injector.get(metadata.service);
     const result: Object[] = await service[method].call(service, {where: criteria, skip: 0, limit: 1});
 
-    if (false === (result.length === 0 || (_.isObject(data) && result.length === 1 && _.difference(
-      _.values(_.pick(result[0], options.properties)),
-      _.values(_.pick(data, options.properties))
-    ).length < options.properties.length))) {
-      const exception = new BadRequestException('Validation Failed');
-      exception.data = [
-        {
-          target: null,
-          property: options.propertyPath,
-          value: _.isObject(data) ? data[options.properties[0]] : undefined,
-          constraints: {
-            'unique': message
-          },
-          children: []
-        }
-      ];
-      throw exception;
+    if (false === (result.length === 0
+      || (_.isObject(data) && result.length === 1 && hasDifference(data, result[0], options)))) {
+      throwException(data, options);
     }
   };
+};
+
+const buildCriteria = (data: Object, properties: Array<string>): Object => {
+  const criteria = { };
+  properties.forEach(field => {
+    const value = _.get(data, field);
+    if (!value) {
+      throw new BadRequestException(`ValidateUnique : missing property: ${field}`);
+    }
+    criteria[field] = { '$eq': value };
+  });
+
+  return criteria;
+};
+
+const hasDifference = (data: Object, result: Object, options: ValidateUniqueOptions): boolean => {
+  return _.difference(
+    _.values(_.pick(result, options.properties)),
+    _.values(_.pick(data, options.properties))
+  ).length  < options.properties.length;
+};
+
+const throwException = (data: Object, options: ValidateUniqueOptions): void => {
+  const message = options.message || 'validation.not_unique';
+  const exception = new BadRequestException('Validation Failed');
+  exception.data = [
+    {
+      target: null,
+      property: options.propertyPath,
+      value: _.isObject(data) ? data[options.properties[0]] : undefined,
+      constraints: {
+        'unique': message
+      },
+      children: []
+    }
+  ];
+  throw exception;
 };
