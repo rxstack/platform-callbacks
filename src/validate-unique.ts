@@ -21,15 +21,13 @@ export const validateUnique = (options: ValidateUniqueOptions): ApiOperationCall
       throw new BadRequestException('ValidateUnique callback is not supported.');
     }
     const data = event.getData();
-    const body = _.isObject(event.request.body) ? event.request.body : { };
-    const criteria = buildCriteria(body, options.properties);
+    const criteria = buildCriteria(event.request.body, options.properties);
 
     const method = options.method || 'findMany';
     const service = event.injector.get(metadata.service);
     const result: Object[] = await service[method].call(service, {where: criteria, skip: 0, limit: 1});
 
-    if (false === (result.length === 0
-      || (_.isObject(data) && result.length === 1 && hasDifference(data, result[0], options)))) {
+    if (shouldThrowException(result, data, options)) {
       throwException(data, options);
     }
   };
@@ -47,6 +45,10 @@ const buildCriteria = (data: Object, properties: Array<string>): Object => {
 
   return criteria;
 };
+
+const shouldThrowException = (result: Array<Object>, data: Object, options: ValidateUniqueOptions): boolean => {
+  return result.length === 0 || (_.isObject(data) && result.length === 1 && hasDifference(data, result[0], options));
+}
 
 const hasDifference = (data: Object, result: Object, options: ValidateUniqueOptions): boolean => {
   return _.difference(
