@@ -2,7 +2,6 @@ import {
   ApiOperationCallback,
   ApiOperationEvent,
   OperationEventsEnum,
-  OperationTypesEnum,
   WriteOperationMetadata
 } from '@rxstack/platform';
 import {validate as _validate, ValidatorOptions} from 'class-validator';
@@ -14,7 +13,7 @@ import {Constructable} from './interfaces';
 export const validate = <T>(type: Constructable<T> | string, options?: ValidatorOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
     const metadata = event.metadata as WriteOperationMetadata<any>;
-    if (event.type !== OperationTypesEnum.WRITE || event.eventType !== OperationEventsEnum.PRE_WRITE) {
+    if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
       throw new BadRequestException('Validate callback is not supported.');
     }
     const groups = event.request.attributes.get('validation_groups');

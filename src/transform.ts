@@ -2,18 +2,18 @@ import {
   ApiOperationCallback,
   ApiOperationEvent
 } from '@rxstack/platform';
-import {BadRequestException} from '@rxstack/exceptions';
 import {classToPlain, ClassTransformOptions, plainToClass} from 'class-transformer';
 import {Constructable} from './interfaces';
-import * as _ from 'lodash';
+import {getSource} from './utils/get-source';
+import {setSource} from './utils/set-source';
+import {doValidateAlterOperations} from './utils/do-validate-alter-operations';
 
 export const transform = <T>(type: Constructable<T>, options?: ClassTransformOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
-    if (!(_.isObject(event.getData()) || _.isArray(event.getData()))) {
-      throw new BadRequestException('event.getData() should return an object or an array.');
-    }
+    doValidateAlterOperations(event.eventType);
+    const source = getSource(event);
+    const data = plainToClass(type, source, { ignoreDecorators: true });
     const groups = event.request.attributes.get('serialization_groups');
-    const input = plainToClass(type, event.getData(), { ignoreDecorators: true });
-    event.setData(classToPlain(input, Object.assign({ groups: groups }, options)));
+    setSource(event, classToPlain(data, Object.assign({ groups: groups }, options)));
   };
 };

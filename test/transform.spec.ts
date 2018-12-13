@@ -5,7 +5,6 @@ import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxsta
 import {APP_OPTIONS} from './mocks/shared/APP_OPTIONS';
 import {transform} from '../src';
 import {Task} from './mocks/transform/task';
-import {BadRequestException} from '@rxstack/exceptions';
 import {app_get_metadata} from './mocks/shared/app.metadata';
 
 const data = {
@@ -48,19 +47,5 @@ describe('PlatformCallbacks:transform', () => {
     await transform(Task)(apiEvent);
     apiEvent.getData()['id'].should.equal('task-1');
     (typeof apiEvent.getData()['name']).should.equal('undefined');
-  });
-
-  it('should throw an exception on invalid data', async () => {
-    const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
-    let exception: BadRequestException;
-
-    try {
-      await transform(Task)(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.statusCode.should.be.equal(400);
   });
 });

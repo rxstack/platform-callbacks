@@ -1,34 +1,31 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent, OperationEventsEnum
+  ApiOperationEvent
 } from '@rxstack/platform';
 import * as _ from 'lodash';
-import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
+import {BadRequestException} from '@rxstack/exceptions';
+import {doValidateAlterOperations} from './utils/do-validate-alter-operations';
+import {getSource} from './utils/get-source';
+import {setSource} from './utils/set-source';
 
 export const rename = (key: string, newKey: string, propertyPath?: string): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
-    const operations = [
-      OperationEventsEnum.PRE_WRITE,
-      OperationEventsEnum.POST_COLLECTION_READ,
-      OperationEventsEnum.POST_READ,
-      OperationEventsEnum.POST_REMOVE,
-    ];
-    if (!operations.includes(event.eventType)) {
-      throw new MethodNotAllowedException(`EventType ${event.eventType} is not supported.`);
-    }
-    const source = event.eventType === OperationEventsEnum.PRE_WRITE ? event.request.body : event.getData();
-    _.isArray(source) ? source.map(value => doRename(value, key, newKey, propertyPath)) :
+    doValidateAlterOperations(event.eventType);
+    const source = getSource(event);
+    const data = _.isArray(source) ? source.map(value => doRename(value, key, newKey, propertyPath)) :
       doRename(source, key, newKey, propertyPath);
+    setSource(event, data);
   };
 };
 
 export const doRename = (source: Object, key: string, newKey: string, propertyPath?: string): Object|Object[] => {
   const data = propertyPath ? _.get(source, propertyPath) : source;
   if (!data) {
-    throw new BadRequestException('Source is not valid');
+    throw new BadRequestException('doRename: source is not valid');
   }
-  return _.isArray(data) ? data.map((value: Object) => doRenameItem(value, key, newKey)) :
+  const result = _.isArray(data) ? data.map((value: Object) => doRenameItem(value, key, newKey)) :
     doRenameItem(data, key, newKey);
+  return propertyPath ? _.set(source, propertyPath, result) : result;
 };
 
 const doRenameItem = (data: Object, key: string, newKey: string): Object => {

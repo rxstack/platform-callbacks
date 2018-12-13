@@ -8,6 +8,14 @@ export interface Constructable<T> {
 
 export type AlterMethod = 'pick' | 'omit';
 
+export type Partial<T> = {
+  [P in keyof T]?: T[P];
+};
+
+export type PartialDeep<T> = {
+  [ P in keyof T ]?: PartialDeep<T[ P ]>;
+};
+
 export interface PopulateSchema<T> {
   service: Type<ServiceInterface<T>> | InjectionToken<ServiceInterface<T>>;
   parentField: string;
