@@ -18,7 +18,7 @@ export interface ValidateUniqueOptions {
 export const validateUnique = (options: ValidateUniqueOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
     const metadata = event.metadata as WriteOperationMetadata<any>;
-    if (event.type !== OperationTypesEnum.WRITE || event.eventType !== OperationEventsEnum.PRE_WRITE) {
+    if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
       throw new BadRequestException('ValidateUnique callback is not supported.');
     }
     const data = event.getData();

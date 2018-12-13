@@ -1,11 +1,13 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
-import {Application, Kernel, Request} from '@rxstack/core';
+import {Request} from '@rxstack/core';
 import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
-import {APP_OPTIONS} from './mocks/shared/APP_OPTIONS';
 import {transform} from '../src';
 import {Task} from './mocks/transform/task';
 import {app_get_metadata} from './mocks/shared/app.metadata';
+
+const sinon = require('sinon');
+const injector = sinon.createStubInstance(Injector);
 
 const data = {
   _id: 'task-1',
@@ -13,20 +15,6 @@ const data = {
 };
 
 describe('PlatformCallbacks:transform', () => {
-  // Setup application
-  const app = new Application(APP_OPTIONS);
-  let injector: Injector;
-  let kernel: Kernel;
-
-  before(async() =>  {
-    await app.start();
-    injector = app.getInjector();
-    kernel = injector.get(Kernel);
-  });
-
-  after(async() =>  {
-    await app.stop();
-  });
 
   it('should transform', async () => {
     const request = new Request('HTTP');
