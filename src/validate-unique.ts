@@ -47,8 +47,9 @@ const buildCriteria = (data: Object, properties: Array<string>): Object => {
 };
 
 const shouldThrowException = (result: Array<Object>, data: Object, options: ValidateUniqueOptions): boolean => {
-  return result.length === 0 || (_.isObject(data) && result.length === 1 && hasDifference(data, result[0], options));
-}
+  return false === (result.length === 0
+    || (_.isObject(data) && result.length === 1 && hasDifference(data, result[0], options)));
+};
 
 const hasDifference = (data: Object, result: Object, options: ValidateUniqueOptions): boolean => {
   return _.difference(
