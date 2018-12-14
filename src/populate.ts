@@ -1,32 +1,40 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent
+  ApiOperationEvent, OperationEventsEnum
 } from '@rxstack/platform';
 import * as _ from 'lodash';
 import {PopulateSchema} from './interfaces';
-import {BadRequestException} from '@rxstack/exceptions';
+import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
+import {Injector} from 'injection-js';
 
 export const populate = <T>(schema: PopulateSchema<T>): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
+    const operations = [
+      OperationEventsEnum.POST_COLLECTION_READ,
+      OperationEventsEnum.POST_READ,
+      OperationEventsEnum.POST_WRITE,
+      OperationEventsEnum.POST_REMOVE,
+    ];
+
+    if (!operations.includes(event.eventType)) {
+      throw new MethodNotAllowedException(`EventType ${event.eventType} is not supported.`);
+    }
+
     const data = event.getData();
-    const ids: any[] = [];
-
-    _.isArray(data) ? data.forEach(value => ids.push(...getIds(value, schema.parentField)))
-      : ids.push(...getIds(data, schema.parentField));
-
-    const uniqueIds = [...new Set(ids)];
-    const service = event.injector.get(schema.service);
-    const defaultQuery = { where: {[schema.childField]: {'$in': uniqueIds}}, limit: uniqueIds.length, skip: 0 };
-    const method = schema.method || 'findMany';
-    const query = schema.query ? _.merge(defaultQuery, schema.query) : defaultQuery;
-    const result = await service[method](query);
-
-    _.isArray(data) ? data.forEach(value => mapResult<T>(schema, value, result)) : mapResult<T>(schema, data, result);
-    event.setData(data);
+    const result = await getResult(getIds(data, schema.parentField), schema, event.injector);
+    _.isArray(data) ? data.map(value => mapResult<T>(schema, value, result))
+      : mapResult<T>(schema, data, result);
   };
 };
 
-const getIds = (value: Object, parentField: string): any[] => {
+const getIds = (data: Object|Array<Object>, parentField: string): Array<any> => {
+  const ids: Array<any> = [];
+  _.isArray(data) ? data.forEach(value => ids.push(...getItemIds(value, parentField)))
+    : ids.push(...getItemIds(data, parentField));
+  return[...new Set(ids)];
+};
+
+const getItemIds = (value: Object, parentField: string): Array<any> => {
   const data = _.get(value, parentField);
   if (typeof data === 'undefined') {
     throw new BadRequestException(`FieldValue in path ${parentField} is undefined.`);
@@ -34,8 +42,16 @@ const getIds = (value: Object, parentField: string): any[] => {
   return _.isArray(data) ? data : [data];
 };
 
+const getResult = async <T>(ids: Array<any>, schema: PopulateSchema<T>, injector: Injector): Promise<Array<T>> => {
+  const service = injector.get(schema.service);
+  const defaultQuery = { where: {[schema.childField]: {'$in': ids}}, limit: ids.length, skip: 0 };
+  const method = schema.method || 'findMany';
+  const query = schema.query ? _.merge(defaultQuery, schema.query) : defaultQuery;
+  return await service[method](query);
+};
+
 const mapResult = <T>(schema: PopulateSchema<T>, data: Object, result: T[]) => {
-  const value: any | any[] = _.get(data, schema.parentField);
+  const value: any | Array<any> = _.get(data, schema.parentField);
   const items = _.isArray(value) ? _.filter(result, (i) => value.includes(i[schema.childField])) :
     _.find(result, (i) => i[schema.childField] === value);
   _.set(data, schema.nameAs || schema.parentField, items);

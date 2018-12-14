@@ -7,7 +7,7 @@ import {UserService} from './mocks/populate/user.service';
 import {POPULATE_OPTIONS} from './mocks/populate/POPULATE_OPTIONS';
 import {populate} from '../src/populate';
 import * as _ from 'lodash';
-import {BadRequestException} from '@rxstack/exceptions';
+import {BadRequestException, Exception} from '@rxstack/exceptions';
 import {QueryInterface} from '@rxstack/query-filter';
 
 const objData = {
@@ -173,4 +173,20 @@ describe('PlatformCallbacks:populate', () => {
     JSON.stringify(injector.get(UserService).lastQuery).should.be.equal(expectedQuery);
   });
 
+  it('should throw BadRequestException on invalid event type', async () => {
+    const request = new Request('HTTP');
+    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
+    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    let exception: BadRequestException;
+    try {
+      await populate({
+        service: UserService,
+        parentField: 'users',
+        childField: 'id',
+      })(apiEvent);
+    } catch (e) {
+      exception = e;
+    }
+    exception.should.be.instanceOf(Exception);
+  });
 });
