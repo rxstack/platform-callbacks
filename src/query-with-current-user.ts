@@ -2,9 +2,10 @@ import {
   ApiOperationCallback,
   ApiOperationEvent, OperationEventsEnum
 } from '@rxstack/platform';
-import {BadRequestException, MethodNotAllowedException, UnauthorizedException} from '@rxstack/exceptions';
+import {MethodNotAllowedException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
 import {CurrentUserOptions} from './interfaces';
+import {assertToken, getUserProperty} from './utils';
 
 export const queryWithCurrentUser = (options: CurrentUserOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
@@ -13,13 +14,8 @@ export const queryWithCurrentUser = (options: CurrentUserOptions): ApiOperationC
     }
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
     const token = event.request.token;
-    if (!token || !token.isAuthenticated()) {
-      throw new UnauthorizedException();
-    }
-    let userId = _.get(token.getUser(), options.idField);
-    if (!userId) {
-      throw new BadRequestException(`Current user is missing ${options.idField}`);
-    }
-    _.merge(event.request.attributes.get('query'), {where: {[options.targetField]: {'$eq': userId}}});
+    assertToken(token);
+    let userProp = getUserProperty(token.getUser(), options.idField);
+    _.merge(event.request.attributes.get('query'), {where: {[options.targetField]: {'$eq': userProp}}});
   };
 };

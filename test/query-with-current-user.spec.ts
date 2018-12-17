@@ -56,8 +56,6 @@ describe('PlatformCallbacks:query-with-current-user', () => {
 
   it('should throw UnauthorizedException', async () => {
     const request = new Request('HTTP');
-    request.token = new Token();
-    request.token.setAuthenticated(false);
     const apiEvent = new ApiOperationEvent(request, injector, app_list_metadata, OperationTypesEnum.LIST);
     apiEvent.eventType = OperationEventsEnum.QUERY;
     let exception: UnauthorizedException;
