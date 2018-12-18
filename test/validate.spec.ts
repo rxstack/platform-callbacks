@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
-import {BadRequestException} from '@rxstack/exceptions';
+import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
 import {validate} from '../src';
 import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
 import {TaskModel} from './mocks/validate/task.model';
@@ -48,18 +48,18 @@ describe('PlatformCallbacks:validate', () => {
     exception.data.length.should.be.equal(1);
   });
 
-  it('should throw an exception on invalid operation', async () => {
+  it('should throw MethodNotAllowedException on invalid operation', async () => {
     const request = new Request('HTTP');
     const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
     apiEvent.eventType = OperationEventsEnum.PRE_READ;
     request.body = { };
-    let exception: BadRequestException;
+    let exception: MethodNotAllowedException;
     try {
       await validate(TaskModel)(apiEvent);
     } catch (e) {
       exception = e;
     }
-    exception.statusCode.should.be.equal(400);
+    exception.statusCode.should.be.equal(405);
   });
 
   it('should use validation schema', async () => {

@@ -6,7 +6,7 @@ import {
 } from '@rxstack/platform';
 import {validate as _validate, ValidatorOptions} from 'class-validator';
 import * as _ from 'lodash';
-import {BadRequestException} from '@rxstack/exceptions';
+import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
 import {classToPlain, plainToClass} from 'class-transformer';
 import {Constructable} from './interfaces';
 
@@ -14,7 +14,7 @@ export const validate = <T>(type: Constructable<T> | string, options?: Validator
   return async (event: ApiOperationEvent): Promise<void> => {
     const metadata = event.metadata as WriteOperationMetadata<any>;
     if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
-      throw new BadRequestException('Validate callback is not supported.');
+      throw new MethodNotAllowedException('Validate callback is not supported.');
     }
     const groups = event.request.attributes.get('validation_groups');
     const input = _.isString(type) ? event.request.body : plainToClass(type, event.request.body);

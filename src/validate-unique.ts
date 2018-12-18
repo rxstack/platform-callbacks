@@ -4,7 +4,7 @@ import {
   OperationEventsEnum,
   WriteOperationMetadata
 } from '@rxstack/platform';
-import {BadRequestException} from '@rxstack/exceptions';
+import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
 
 export interface ValidateUniqueOptions {
@@ -18,7 +18,7 @@ export const validateUnique = (options: ValidateUniqueOptions): ApiOperationCall
   return async (event: ApiOperationEvent): Promise<void> => {
     const metadata = event.metadata as WriteOperationMetadata<any>;
     if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
-      throw new BadRequestException('ValidateUnique callback is not supported.');
+      throw new MethodNotAllowedException('ValidateUnique callback is not supported.');
     }
     const data = event.getData();
     const criteria = buildCriteria(event.request.body, options.properties);
