@@ -8,21 +8,10 @@ import {ForbiddenException, MethodNotAllowedException, UnauthorizedException} fr
 import {Token} from './mocks/shared/token';
 import {restrictToRole} from '../src';
 
+const sinon = require('sinon');
+const injector = sinon.createStubInstance(Injector);
+
 describe('PlatformCallbacks:restrict-to-role', () => {
-  // Setup application
-  const app = new Application(APP_OPTIONS);
-  let injector: Injector;
-  let kernel: Kernel;
-
-  before(async() =>  {
-    await app.start();
-    injector = app.getInjector();
-    kernel = injector.get(Kernel);
-  });
-
-  after(async() =>  {
-    await app.stop();
-  });
 
   it('should pass', async () => {
     const request = new Request('HTTP');
@@ -44,19 +33,6 @@ describe('PlatformCallbacks:restrict-to-role', () => {
       exception = e;
     }
     exception.should.be.instanceOf(MethodNotAllowedException);
-  });
-
-  it('should throw UnauthorizedException', async () => {
-    const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
-    let exception: UnauthorizedException;
-    try {
-      await restrictToRole('ROLE_ADMIN')(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.should.be.instanceOf(UnauthorizedException);
   });
 
   it('should throw ForbiddenException', async () => {

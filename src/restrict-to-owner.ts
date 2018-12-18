@@ -8,7 +8,7 @@ import {
 } from '@rxstack/exceptions';
 import {CurrentUserOptions} from './interfaces';
 import * as _ from 'lodash';
-import {assertToken, getUserProperty} from './utils';
+import {assertToken, getProperty} from './utils';
 
 export const restrictToOwner = (options?: CurrentUserOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
@@ -16,7 +16,7 @@ export const restrictToOwner = (options?: CurrentUserOptions): ApiOperationCallb
     const token = event.request.token;
     assertToken(token);
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
-    const userProp = getUserProperty(token.getUser(), options.idField);
+    const userProp = getProperty(token.getUser(), options.idField);
     const targetId = _.get(event.getData(), options.targetField);
     if (userProp !== targetId) {
       throw new ForbiddenException();

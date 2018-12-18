@@ -8,7 +8,7 @@ import {
 import {CurrentUserOptions} from './interfaces';
 import {OperationEventsEnum} from '@rxstack/platform/dist/enums';
 import * as _ from 'lodash';
-import {assertToken, getUserProperty} from './utils';
+import {assertToken, getProperty} from './utils';
 
 export const associateWithCurrentUser = (options: CurrentUserOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
@@ -16,7 +16,7 @@ export const associateWithCurrentUser = (options: CurrentUserOptions): ApiOperat
     const token = event.request.token;
     assertToken(token);
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
-    const userId = getUserProperty(token.getUser(), options.idField);
+    const userId = getProperty(token.getUser(), options.idField);
     _.isArray(event.request.body) ?
       _.forEach(event.request.body, (item) => _.set(item, options.targetField, userId)) :
     _.set(event.request.body, options.targetField, userId);

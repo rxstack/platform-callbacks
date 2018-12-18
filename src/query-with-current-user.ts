@@ -5,7 +5,7 @@ import {
 import {MethodNotAllowedException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
 import {CurrentUserOptions} from './interfaces';
-import {assertToken, getUserProperty} from './utils';
+import {assertToken, getProperty} from './utils';
 
 export const queryWithCurrentUser = (options: CurrentUserOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
@@ -15,7 +15,7 @@ export const queryWithCurrentUser = (options: CurrentUserOptions): ApiOperationC
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
     const token = event.request.token;
     assertToken(token);
-    let userProp = getUserProperty(token.getUser(), options.idField);
+    let userProp = getProperty(token.getUser(), options.idField);
     _.merge(event.request.attributes.get('query'), {where: {[options.targetField]: {'$eq': userProp}}});
   };
 };

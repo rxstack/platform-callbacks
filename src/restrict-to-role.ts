@@ -2,7 +2,7 @@ import {
   ApiOperationCallback,
   ApiOperationEvent, OperationEventsEnum
 } from '@rxstack/platform';
-import {ForbiddenException, MethodNotAllowedException, UnauthorizedException} from '@rxstack/exceptions';
+import {ForbiddenException, MethodNotAllowedException} from '@rxstack/exceptions';
 import {assertToken} from './utils';
 
 export const restrictToRole = (role: string): ApiOperationCallback => {
