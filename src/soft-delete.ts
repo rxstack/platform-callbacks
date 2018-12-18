@@ -2,7 +2,7 @@ import {
   ApiOperationCallback,
   ApiOperationEvent, OperationEventsEnum, RemoveOperationMetadata
 } from '@rxstack/platform';
-import {BadRequestException, NotFoundException} from '@rxstack/exceptions';
+import {MethodNotAllowedException, NotFoundException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
 import {Response} from '@rxstack/core';
 import {QueryInterface} from '@rxstack/query-filter';
@@ -17,17 +17,17 @@ export const softDelete = (options?: SoftDeleteOptions): ApiOperationCallback =>
     switch (event.eventType) {
       case OperationEventsEnum.PRE_WRITE:
       case OperationEventsEnum.PRE_READ:
-        checkObjectIfDeleted(event, resolvedOptions);
+        checkObjectIfDeleted(event.getData(), resolvedOptions);
         break;
       case OperationEventsEnum.QUERY:
         onQuery(event, resolvedOptions);
         break;
       case OperationEventsEnum.PRE_REMOVE:
-        checkObjectIfDeleted(event, resolvedOptions);
+        checkObjectIfDeleted(event.getData(), resolvedOptions);
         await onPreRemove(event, resolvedOptions);
         break;
       default:
-        throw new BadRequestException(`SoftDelete is not supported in event type ${event.eventType}`);
+        throw new MethodNotAllowedException(`SoftDelete is not supported in event type ${event.eventType}`);
     }
   };
 };
@@ -46,8 +46,8 @@ const onPreRemove = async (event: ApiOperationEvent, options: SoftDeleteOptions)
   event.response = new Response(null, 204);
 };
 
-const checkObjectIfDeleted = (event: ApiOperationEvent, options: SoftDeleteOptions): void => {
-  if (_.isDate(_.get(event.getData(), options.deleteField))) {
+const checkObjectIfDeleted = (data: Object, options: SoftDeleteOptions): void => {
+  if (_.isDate(_.get(data, options.deleteField))) {
     throw new NotFoundException();
   }
 };

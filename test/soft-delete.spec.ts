@@ -4,7 +4,7 @@ import {Application, Kernel, Request} from '@rxstack/core';
 import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
 import {APP_OPTIONS} from './mocks/shared/APP_OPTIONS';
 import {app_create_metadata, app_get_metadata, app_remove_metadata} from './mocks/shared/app.metadata';
-import {BadRequestException, NotFoundException} from '@rxstack/exceptions';
+import {MethodNotAllowedException, NotFoundException} from '@rxstack/exceptions';
 import {softDelete} from '../src/soft-delete';
 
 describe('PlatformCallbacks:soft-delete', () => {
@@ -67,19 +67,19 @@ describe('PlatformCallbacks:soft-delete', () => {
     apiEvent.response.statusCode.should.be.equal(204);
   });
 
-  it('should throw an exception if event type is not supported', async () => {
+  it('should throw MethodNotAllowedException if event type is not supported', async () => {
     const request = new Request('HTTP');
     const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
     apiEvent.eventType = OperationEventsEnum.POST_READ;
     apiEvent.setData({'deletedAt': new Date()});
-    let exception: BadRequestException;
+    let exception: MethodNotAllowedException;
 
     try {
       await softDelete()(apiEvent);
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(BadRequestException);
+    exception.should.be.instanceOf(MethodNotAllowedException);
   });
 });
 

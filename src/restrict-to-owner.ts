@@ -1,36 +1,30 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent, OperationEventsEnum
+  ApiOperationEvent
 } from '@rxstack/platform';
 import {
-  ForbiddenException,
-  MethodNotAllowedException
+  ForbiddenException
 } from '@rxstack/exceptions';
 import {CurrentUserOptions} from './interfaces';
 import * as _ from 'lodash';
-import {assertToken, getProperty} from './utils';
+import {assertToken, getProperty, restrictToPreOperations} from './utils';
 
 export const restrictToOwner = (options?: CurrentUserOptions): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
-    validateEventTypeOperation(event.eventType);
+    restrictToPreOperations(event.eventType);
     const token = event.request.token;
     assertToken(token);
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
     const userProp = getProperty(token.getUser(), options.idField);
-    const targetId = _.get(event.getData(), options.targetField);
-    if (userProp !== targetId) {
-      throw new ForbiddenException();
-    }
+    const data = event.getData();
+    _.isArray(data) ? data.forEach((v) => checkData(v, userProp, options.targetField)) :
+      checkData(data, userProp, options.targetField);
   };
 };
 
-const validateEventTypeOperation = (eventType: OperationEventsEnum): void => {
-  const operations = [
-    OperationEventsEnum.PRE_WRITE,
-    OperationEventsEnum.PRE_READ,
-    OperationEventsEnum.PRE_REMOVE,
-  ];
-  if (!operations.includes(eventType)) {
-    throw new MethodNotAllowedException(`EventType ${eventType} is not supported.`);
+const checkData = (data: Object, userProp: any, targetField: string): void => {
+  const targetId = _.get(data, targetField);
+  if (userProp !== targetId) {
+    throw new ForbiddenException();
   }
 };
