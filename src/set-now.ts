@@ -1,20 +1,20 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent
+  ApiOperationEvent, OperationEventsEnum
 } from '@rxstack/platform';
-import {BadRequestException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
+import {getSource} from './utils';
+import {MethodNotAllowedException} from '@rxstack/exceptions';
 
 export const setNow = (...fieldNames: string[]): ApiOperationCallback => {
   return async (event: ApiOperationEvent): Promise<void> => {
-    const data = event.request.body;
-    _.isArray(data) ? data.forEach((v) => doSetNow(v, fieldNames)) : doSetNow(data, fieldNames);
+    if (event.eventType === OperationEventsEnum.QUERY) {
+      throw new MethodNotAllowedException(`EventType ${event.eventType} is not supported.`);
+    }
+    const data = getSource(event);
+    _.isArray(data) ? data.map((v) => doSetNow(v, fieldNames)) : doSetNow(data, fieldNames);
   };
 };
 
-const doSetNow = (data: Object, fieldNames: string[]): void => {
-  if (!_.isObject(data)) {
-    throw new BadRequestException('Request body should be an object');
-  }
+const doSetNow = (data: Object, fieldNames: Array<string>): void =>
   fieldNames.forEach((path) => _.set(data, path, new Date()));
-};
