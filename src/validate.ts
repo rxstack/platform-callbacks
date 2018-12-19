@@ -16,11 +16,25 @@ export const validate = <T>(type: Constructable<T> | string, options?: Validator
     if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
       throw new MethodNotAllowedException('Validate callback is not supported.');
     }
-    const groups = event.request.attributes.get('validation_groups');
-    const input = _.isString(type) ? event.request.body : plainToClass(type, event.request.body);
-    await doValidate(type, input, resolveOptions(metadata.type, groups, options));
-    event.request.body = classToPlain(input);
+    let data = event.request.body;
+    const resolvedOptions = resolveOptions(metadata.type, event.request.attributes.get('validation_groups'), options);
+
+    if (_.isArray(data)) {
+      for (let i = 0; i < data.length; i++) {
+        data[i] = await validateItem(data[i], type, resolvedOptions);
+      }
+    } else {
+      data = await validateItem(event.request.body, type, resolvedOptions);
+    }
+    event.request.body = data;
   };
+};
+
+const validateItem = async <T>(data: Object, type: Constructable<T> | string,
+                               options?: ValidatorOptions): Promise<Object> => {
+  const input = _.isString(type) ? data : plainToClass(type, data);
+  await doValidate(type, input, options);
+  return classToPlain(input);
 };
 
 const resolveOptions = (type: string, groups?: Array<string>, options?: ValidatorOptions): ValidatorOptions => {

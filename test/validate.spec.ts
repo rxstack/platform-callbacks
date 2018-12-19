@@ -15,7 +15,7 @@ registerSchema(taskValidationSchema);
 
 describe('PlatformCallbacks:validate', () => {
 
-  it('should validate with errors', async () => {
+  it('should validate with errors on object', async () => {
     const request = new Request('HTTP');
     const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
     apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
@@ -27,6 +27,23 @@ describe('PlatformCallbacks:validate', () => {
     } catch (e) {
       exception = e;
     }
+    exception.statusCode.should.be.equal(400);
+    exception.data.length.should.be.equal(3);
+  });
+
+  it('should validate with errors on array', async () => {
+    const request = new Request('HTTP');
+    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
+    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    request.body = [{}, {}, {}];
+    let exception: BadRequestException;
+
+    try {
+      await validate(TaskModel)(apiEvent);
+    } catch (e) {
+      exception = e;
+    }
+
     exception.statusCode.should.be.equal(400);
     exception.data.length.should.be.equal(3);
   });
