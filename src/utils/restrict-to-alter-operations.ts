@@ -1,7 +1,7 @@
 import {OperationEventsEnum} from '@rxstack/platform';
 import {MethodNotAllowedException} from '@rxstack/exceptions';
 
-export const doValidateAlterOperations = (eventType: OperationEventsEnum): void => {
+export const restrictToAlterOperations = (eventType: OperationEventsEnum): void => {
   const operations = [
     OperationEventsEnum.PRE_WRITE,
     OperationEventsEnum.POST_COLLECTION_READ,

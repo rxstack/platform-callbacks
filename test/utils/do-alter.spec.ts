@@ -36,7 +36,6 @@ describe('PlatformCallbacks:utils:do-alter', () => {
     Object.keys(result['user']).length.should.equal(1);
   });
 
-
   it('should throw BadRequestException', async () => {
     const data = {};
     let exception: BadRequestException;

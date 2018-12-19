@@ -1,6 +1,6 @@
 export * from './interfaces';
 export * from './utils';
-export * from './utils/do-validate-alter-operations';
+export * from './utils/restrict-to-alter-operations';
 export * from './utils/do-alter';
 export * from './validate';
 export * from './validate-unique';
