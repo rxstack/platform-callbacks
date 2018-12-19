@@ -20,18 +20,23 @@ export const validateUnique = (options: ValidateUniqueOptions): ApiOperationCall
     if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
       throw new MethodNotAllowedException('ValidateUnique callback is not supported.');
     }
+    const service = event.injector.get(metadata.service);
     const input = event.request.body;
     const data = _.isArray(event.getData()) ? event.getData<Array<Object>>() : [event.getData<Object>()];
-    const filteredData = data.filter((v) => _.isObject(v));
-    const service = event.injector.get(metadata.service);
-    if (_.isArray(input)) {
-      for (let i = 0; i < input.length; i++) {
-        await validateUniqueItem(service, input[i], filteredData, options);
-      }
-    } else {
-      await validateUniqueItem(service, input, filteredData, options);
-    }
+    await processUniqueValidation(service, input, data, options);
   };
+};
+
+const processUniqueValidation = async <T>(service: ServiceInterface<T>, input: any, data: Array<Object>,
+                                          options: ValidateUniqueOptions): Promise<void> => {
+  const filteredData = data.filter((v) => _.isObject(v));
+  if (_.isArray(input)) {
+    for (let i = 0; i < input.length; i++) {
+      await validateUniqueItem(service, input[i], filteredData, options);
+    }
+  } else {
+    await validateUniqueItem(service, input, filteredData, options);
+  }
 };
 
 const validateUniqueItem = async <T>(service: ServiceInterface<T>, input: Object,
@@ -44,10 +49,10 @@ const validateUniqueItem = async <T>(service: ServiceInterface<T>, input: Object
   }
 };
 
-const buildCriteria = (data: Object, properties: Array<string>): Object => {
+const buildCriteria = (input: Object, properties: Array<string>): Object => {
   const criteria = { };
   properties.forEach(field => {
-    const value = _.get(data, field);
+    const value = _.get(input, field);
     if (!value) {
       throw new BadRequestException(`ValidateUnique : missing property: ${field}`);
     }
