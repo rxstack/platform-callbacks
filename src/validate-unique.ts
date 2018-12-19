@@ -1,7 +1,7 @@
 import {
   ApiOperationCallback,
   ApiOperationEvent,
-  OperationEventsEnum,
+  OperationEventsEnum, ServiceInterface,
   WriteOperationMetadata
 } from '@rxstack/platform';
 import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
@@ -20,17 +20,28 @@ export const validateUnique = (options: ValidateUniqueOptions): ApiOperationCall
     if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
       throw new MethodNotAllowedException('ValidateUnique callback is not supported.');
     }
-    const data = event.getData();
-    const criteria = buildCriteria(event.request.body, options.properties);
-
-    const method = options.method || 'findMany';
+    const input = event.request.body;
+    const data = _.isArray(event.getData()) ? event.getData<Array<Object>>() : [event.getData<Object>()];
+    const filteredData = data.filter((v) => _.isObject(v));
     const service = event.injector.get(metadata.service);
-    const result: Object[] = await service[method].call(service, {where: criteria, skip: 0, limit: 1});
-
-    if (shouldThrowException(result, data, options)) {
-      throwException(data, options);
+    if (_.isArray(input)) {
+      for (let i = 0; i < input.length; i++) {
+        await validateUniqueItem(service, input[i], filteredData, options);
+      }
+    } else {
+      await validateUniqueItem(service, input, filteredData, options);
     }
   };
+};
+
+const validateUniqueItem = async <T>(service: ServiceInterface<T>, input: Object,
+                                     data: Array<Object>, options: ValidateUniqueOptions): Promise<void> => {
+  const criteria = buildCriteria(input, options.properties);
+  const method = options.method || 'findMany';
+  const result: Object[] = await service[method].call(service, {where: criteria, skip: 0, limit: 1});
+  if (shouldThrowException(result, data, options)) {
+    throwException(input, options);
+  }
 };
 
 const buildCriteria = (data: Object, properties: Array<string>): Object => {
@@ -46,26 +57,23 @@ const buildCriteria = (data: Object, properties: Array<string>): Object => {
   return criteria;
 };
 
-const shouldThrowException = (result: Array<Object>, data: Object, options: ValidateUniqueOptions): boolean => {
-  return false === (result.length === 0
-    || (_.isObject(data) && result.length === 1 && hasDifference(data, result[0], options)));
+const shouldThrowException = (result: Array<Object>, data: Array<Object>, options: ValidateUniqueOptions): boolean => {
+  return false === (result.length === 0 || exists(result[0], data, options.properties));
 };
 
-const hasDifference = (data: Object, result: Object, options: ValidateUniqueOptions): boolean => {
-  return _.difference(
-    _.values(_.pick(result, options.properties)),
-    _.values(_.pick(data, options.properties))
-  ).length  < options.properties.length;
+const exists = (result: Object, data: Array<Object>, properties: Array<string>): boolean => {
+  const partialResult = _.pick(result, properties);
+  return !!_.find(data, (value: Object) => _.isEqual(partialResult, _.pick(value, properties)));
 };
 
-const throwException = (data: Object, options: ValidateUniqueOptions): void => {
+const throwException = (input: Object, options: ValidateUniqueOptions): void => {
   const message = options.message || 'validation.not_unique';
   const exception = new BadRequestException('Validation Failed');
   exception.data = [
     {
       target: null,
       property: options.propertyPath,
-      value: _.isObject(data) ? data[options.properties[0]] : undefined,
+      value: _.get(input, options.properties[0]),
       constraints: {
         'unique': message
       },
