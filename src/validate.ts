@@ -16,18 +16,21 @@ export const validate = <T>(type: Constructable<T> | string, options?: Validator
     if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
       throw new MethodNotAllowedException('Validate callback is not supported.');
     }
-    let data = event.request.body;
     const resolvedOptions = resolveOptions(metadata.type, event.request.attributes.get('validation_groups'), options);
-
-    if (_.isArray(data)) {
-      for (let i = 0; i < data.length; i++) {
-        data[i] = await validateItem(data[i], type, resolvedOptions);
-      }
-    } else {
-      data = await validateItem(event.request.body, type, resolvedOptions);
-    }
-    event.request.body = data;
+    event.request.body = await processData(event.request.body, type, resolvedOptions);
   };
+};
+
+const processData = async <T>(data: any, type: Constructable<T> | string,
+                              options?: ValidatorOptions): Promise<any> => {
+  if (_.isArray(data)) {
+    for (let i = 0; i < data.length; i++) {
+      data[i] = await validateItem(data[i], type, options);
+    }
+  } else {
+    data = await validateItem(data, type, options);
+  }
+  return data;
 };
 
 const validateItem = async <T>(data: Object, type: Constructable<T> | string,
