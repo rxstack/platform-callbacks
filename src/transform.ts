@@ -1,19 +1,16 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent
+  OperationEvent
 } from '@rxstack/platform';
 import {classToPlain, ClassTransformOptions, plainToClass} from 'class-transformer';
 import {Constructable} from './interfaces';
 import {getSource} from './utils/get-source';
 import {setSource} from './utils/set-source';
-import {restrictToAlterOperations} from './utils/restrict-to-alter-operations';
 
 export const transform = <T>(type: Constructable<T>, options?: ClassTransformOptions): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    restrictToAlterOperations(event.eventType);
+  return async (event: OperationEvent): Promise<void> => {
     const source = getSource(event);
     const data = plainToClass(type, source, { ignoreDecorators: true });
-    const groups = event.request.attributes.get('serialization_groups');
-    setSource(event, classToPlain(data, Object.assign({ groups: groups }, options)));
+    setSource(event, classToPlain(data, options));
   };
 };

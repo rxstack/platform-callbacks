@@ -4,9 +4,10 @@ import {Application, Kernel, Request} from '@rxstack/core';
 import {VALIDATE_UNIQUE_OPTIONS} from './mocks/validate-unique/VALIDATE_UNIQUE_OPTIONS';
 import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
 import {validateUnique, ValidateUniqueOptions} from '../src';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {data1, data2, data_valid} from './mocks/validate-unique/data';
 import {app_task_metadata} from './mocks/validate-unique/app_task.metadata';
+import {TaskService} from './mocks/validate-unique/task.service';
 
 describe('PlatformCallbacks:validate-unique', () => {
   // Setup application
@@ -26,13 +27,14 @@ describe('PlatformCallbacks:validate-unique', () => {
 
   it('should throw MethodNotAllowedException on invalid operation', async () => {
     const options: ValidateUniqueOptions = {
+      service: TaskService,
       properties: ['id'],
       propertyPath: 'id',
     };
 
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_task_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
+    apiEvent.eventType = OperationEventsEnum.INIT;
     let exception: MethodNotAllowedException;
 
     try {
@@ -45,13 +47,14 @@ describe('PlatformCallbacks:validate-unique', () => {
 
   it('should throw an exception on missing property', async () => {
     const options: ValidateUniqueOptions = {
+      service: TaskService,
       properties: ['id'],
       propertyPath: 'id',
     };
 
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_task_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     let exception: BadRequestException;
 
     try {
@@ -64,13 +67,14 @@ describe('PlatformCallbacks:validate-unique', () => {
 
   it('should validate unique property in create mode and throw an exception', async () => {
     const options: ValidateUniqueOptions = {
+      service: TaskService,
       properties: ['id'],
       propertyPath: 'id',
     };
 
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_task_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = data1;
     let exception: BadRequestException;
 
@@ -84,13 +88,14 @@ describe('PlatformCallbacks:validate-unique', () => {
 
   it('should validate unique property in bulk create mode and throw an exception', async () => {
     const options: ValidateUniqueOptions = {
+      service: TaskService,
       properties: ['id'],
       propertyPath: 'id',
     };
 
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_task_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = [data1];
     let exception: BadRequestException;
 
@@ -104,26 +109,28 @@ describe('PlatformCallbacks:validate-unique', () => {
 
   it('should validate unique property in create mode successfully', async () => {
     const options: ValidateUniqueOptions = {
+      service: TaskService,
       properties: ['id'],
       propertyPath: 'id',
     };
 
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_task_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = data_valid;
     await validateUnique(options)(apiEvent);
   });
 
   it('should validate unique property in bulk update mode and throw an exception', async () => {
     const options: ValidateUniqueOptions = {
+      service: TaskService,
       properties: ['id'],
       propertyPath: 'id',
     };
 
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_task_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     apiEvent.setData([data1]);
     request.body = [data2];
     let exception: BadRequestException;
@@ -138,13 +145,14 @@ describe('PlatformCallbacks:validate-unique', () => {
 
   it('should validate with one unique property in update mode successfully', async () => {
     const options: ValidateUniqueOptions = {
+      service: TaskService,
       properties: ['id'],
       propertyPath: 'id',
     };
 
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_task_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     apiEvent.setData(data1);
     request.body = data1;
     await validateUnique(options)(apiEvent);

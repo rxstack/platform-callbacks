@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {transform} from '../src';
 import {Task} from './mocks/transform/task';
 import {app_get_metadata} from './mocks/shared/app.metadata';
@@ -18,22 +18,11 @@ describe('PlatformCallbacks:transform', () => {
 
   it('should transform', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(data);
     await transform(Task, {groups: ['group_id', 'group_name']})(apiEvent);
     apiEvent.getData()['id'].should.equal('task-1');
     apiEvent.getData()['name'].should.equal('task-name');
-  });
-
-  it('should transform with dynamic serialization groups', async () => {
-    const request = new Request('HTTP');
-    request.attributes.set('serialization_groups', ['group_id']);
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
-    apiEvent.setData(data);
-    await transform(Task)(apiEvent);
-    apiEvent.getData()['id'].should.equal('task-1');
-    (typeof apiEvent.getData()['name']).should.equal('undefined');
   });
 });

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
 import {UnauthorizedException} from '@rxstack/exceptions';
 import {Token} from './mocks/shared/token';
@@ -14,8 +14,8 @@ describe('PlatformCallbacks:restrict-to-authenticated-user', () => {
   it('should pass fully authenticated user', async () => {
     const request = new Request('HTTP');
     request.token = new Token();
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.INIT;
     await restrictToAuthenticatedUser()(apiEvent); // do nothing
   });
 
@@ -23,8 +23,8 @@ describe('PlatformCallbacks:restrict-to-authenticated-user', () => {
     const request = new Request('HTTP');
     request.token = new Token();
     request.token.setFullyAuthenticated(false);
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.INIT;
     await restrictToAuthenticatedUser(false)(apiEvent); // do nothing
   });
 
@@ -32,8 +32,8 @@ describe('PlatformCallbacks:restrict-to-authenticated-user', () => {
     const request = new Request('HTTP');
     request.token = new Token();
     request.token.setAuthenticated(false);
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.INIT;
     let exception: UnauthorizedException;
     try {
       await restrictToAuthenticatedUser()(apiEvent);
@@ -47,8 +47,8 @@ describe('PlatformCallbacks:restrict-to-authenticated-user', () => {
     const request = new Request('HTTP');
     request.token = new Token();
     request.token.setFullyAuthenticated(false);
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.INIT;
     let exception: UnauthorizedException;
     try {
       await restrictToAuthenticatedUser()(apiEvent);

@@ -3,7 +3,7 @@ import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
 import {validate} from '../src';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {TaskModel} from './mocks/validate/task.model';
 import {taskValidationSchema} from './mocks/validate/task.validation.schema';
 import {registerSchema} from 'class-validator';
@@ -17,8 +17,8 @@ describe('PlatformCallbacks:validate', () => {
 
   it('should validate with errors on object', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = { };
     let exception: BadRequestException;
 
@@ -33,8 +33,8 @@ describe('PlatformCallbacks:validate', () => {
 
   it('should validate with errors on array', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = [{}, {}, {}];
     let exception: BadRequestException;
 
@@ -49,26 +49,10 @@ describe('PlatformCallbacks:validate', () => {
   });
 
 
-  it('should validate with errors and dynamic groups', async () => {
-    const request = new Request('HTTP');
-    request.attributes.set('validation_groups',  ['group2']);
-    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
-    request.body = { };
-    let exception: BadRequestException;
-    try {
-      await validate(TaskModel)(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.statusCode.should.be.equal(400);
-    exception.data.length.should.be.equal(1);
-  });
-
   it('should throw MethodNotAllowedException on invalid operation', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     request.body = { };
     let exception: MethodNotAllowedException;
     try {
@@ -81,8 +65,8 @@ describe('PlatformCallbacks:validate', () => {
 
   it('should use validation schema', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = { };
     let exception: BadRequestException;
     try {
@@ -95,8 +79,8 @@ describe('PlatformCallbacks:validate', () => {
 
   it('should validate without errors', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = {
       id: 'task-1',
       name: 'task one',

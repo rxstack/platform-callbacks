@@ -1,17 +1,16 @@
 import {
-  ApiOperationCallback,
-  ApiOperationEvent
+  ApiOperationCallback, OperationEvent, OperationEventsEnum,
 } from '@rxstack/platform';
 import {
   ForbiddenException
 } from '@rxstack/exceptions';
 import {CurrentUserOptions} from './interfaces';
 import * as _ from 'lodash';
-import {assertToken, getProperty, restrictToPreOperations} from './utils';
+import {assertToken, getProperty, restrictToOperations} from './utils';
 
 export const restrictToOwner = (options?: CurrentUserOptions): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    restrictToPreOperations(event.eventType);
+  return async (event: OperationEvent): Promise<void> => {
+    restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
     const token = event.request.token;
     assertToken(token);
     options = _.merge({idField: 'id', targetField: 'userId'}, options);

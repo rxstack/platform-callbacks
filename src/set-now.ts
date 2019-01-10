@@ -1,16 +1,12 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent, OperationEventsEnum
+  OperationEvent
 } from '@rxstack/platform';
 import * as _ from 'lodash';
 import {getSource} from './utils';
-import {MethodNotAllowedException} from '@rxstack/exceptions';
 
 export const setNow = (...fieldNames: string[]): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    if (event.eventType === OperationEventsEnum.QUERY) {
-      throw new MethodNotAllowedException(`EventType ${event.eventType} is not supported.`);
-    }
+  return async (event: OperationEvent): Promise<void> => {
     const data = getSource(event);
     _.isArray(data) ? data.map((v) => doSetNow(v, fieldNames)) : doSetNow(data, fieldNames);
   };

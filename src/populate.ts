@@ -1,25 +1,16 @@
 import {
-  ApiOperationCallback,
-  ApiOperationEvent, OperationEventsEnum
+  ApiOperationCallback, OperationEvent,
+  OperationEventsEnum
 } from '@rxstack/platform';
 import * as _ from 'lodash';
 import {PopulateSchema} from './interfaces';
-import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
+import {BadRequestException} from '@rxstack/exceptions';
 import {Injector} from 'injection-js';
+import {restrictToOperations} from './utils';
 
 export const populate = <T>(schema: PopulateSchema<T>): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    const operations = [
-      OperationEventsEnum.POST_COLLECTION_READ,
-      OperationEventsEnum.POST_READ,
-      OperationEventsEnum.POST_WRITE,
-      OperationEventsEnum.POST_REMOVE,
-    ];
-
-    if (!operations.includes(event.eventType)) {
-      throw new MethodNotAllowedException(`EventType ${event.eventType} is not supported.`);
-    }
-
+  return async (event: OperationEvent): Promise<void> => {
+    restrictToOperations(event.eventType, [OperationEventsEnum.POST_EXECUTE]);
     const data = event.getData();
     const result = await getResult(getIds(data, schema.parentField), schema, event.injector);
     _.isArray(data) ? data.map(value => mapResult<T>(schema, value, result))

@@ -1,16 +1,16 @@
-import {restrictToPreOperations} from '../../src/index';
 import {MethodNotAllowedException} from '@rxstack/exceptions';
 import {OperationEventsEnum} from '@rxstack/platform';
+import {restrictToOperations} from '../../src/utils';
 
 describe('PlatformCallbacks:utils:restrict-to-pre-operations', () => {
   it('should pass', async () => {
-    restrictToPreOperations(OperationEventsEnum.PRE_COLLECTION_READ);
+    restrictToOperations('init', [OperationEventsEnum.INIT]);
   });
 
   it('should throw MethodNotAllowedException', async () => {
     let exception: MethodNotAllowedException;
     try {
-      restrictToPreOperations(OperationEventsEnum.POST_READ);
+      restrictToOperations('init', [OperationEventsEnum.POST_EXECUTE]);
     } catch (e) {
       exception = e;
     }

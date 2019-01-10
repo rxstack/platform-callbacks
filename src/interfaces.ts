@@ -29,3 +29,11 @@ export interface CurrentUserOptions {
   idField?: string;
   targetField?: string;
 }
+
+export interface ValidateUniqueOptions {
+  service: Type<ServiceInterface<any>> | InjectionToken<ServiceInterface<any>>;
+  properties: string[];
+  propertyPath: string;
+  method?: string;
+  message?: string;
+}

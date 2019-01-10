@@ -1,13 +1,13 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent
+  OperationEvent, OperationEventsEnum
 } from '@rxstack/platform';
 import {ForbiddenException} from '@rxstack/exceptions';
-import {assertToken, restrictToPreOperations} from './utils';
+import {assertToken, restrictToOperations} from './utils';
 
 export const restrictToRole = (role: string): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    restrictToPreOperations(event.eventType);
+  return async (event: OperationEvent): Promise<void> => {
+    restrictToOperations(event.eventType, [OperationEventsEnum.INIT, OperationEventsEnum.PRE_EXECUTE]);
     const token = event.request.token;
     assertToken(token);
     if (!token.hasRole(role)) {

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Application, Kernel, Request} from '@rxstack/core';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata, app_list_metadata} from './mocks/shared/app.metadata';
 import {UserService} from './mocks/populate/user.service';
 import {POPULATE_OPTIONS} from './mocks/populate/POPULATE_OPTIONS';
@@ -44,8 +44,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should populate from object data and string value', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(objData));
 
     await populate({
@@ -59,8 +59,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should populate from object data and array value', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(objData));
 
     await populate({
@@ -74,8 +74,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should populate from array data and string value', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_list_metadata, OperationTypesEnum.LIST);
-    apiEvent.eventType = OperationEventsEnum.POST_COLLECTION_READ;
+    const apiEvent = new OperationEvent(request, injector, app_list_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(arrayData));
 
     await populate({
@@ -91,8 +91,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should populate from array data and array value', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_list_metadata, OperationTypesEnum.LIST);
-    apiEvent.eventType = OperationEventsEnum.POST_COLLECTION_READ;
+    const apiEvent = new OperationEvent(request, injector, app_list_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(arrayData));
 
     await populate({
@@ -107,8 +107,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should throw an exception if path is not found', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(objData));
     let exception: BadRequestException;
 
@@ -127,8 +127,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should populate with a custom property name ', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(objData));
 
     await populate({
@@ -142,8 +142,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should populate from a custom method', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(objData));
 
     await populate({
@@ -158,8 +158,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should populate with custom query', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(objData));
     const q: QueryInterface = {where: {username: {'$eq': 'user-1'}}, limit: 2, skip: 0, sort: { id: -1 } };
     await populate({
@@ -175,8 +175,8 @@ describe('PlatformCallbacks:populate', () => {
 
   it('should throw BadRequestException on invalid event type', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     let exception: BadRequestException;
     try {
       await populate({

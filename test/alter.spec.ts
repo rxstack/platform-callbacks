@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
 import {dataArray1, dataObj1} from './mocks/shared/data';
 import * as _ from 'lodash';
@@ -14,8 +14,8 @@ describe('PlatformCallbacks:alter', () => {
 
   it('should keep properties in an object', async () => {
     const request = new Request('HTTP');
-    const event = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    event.eventType = OperationEventsEnum.POST_READ;
+    const event = new OperationEvent(request, injector, app_get_metadata);
+    event.eventType = OperationEventsEnum.POST_EXECUTE;
     event.setData(_.cloneDeep(dataObj1));
     await alter('pick', ['name'])(event);
     Object.keys(event.getData()).length.should.equal(1);
@@ -23,8 +23,8 @@ describe('PlatformCallbacks:alter', () => {
 
   it('should keep properties in an array of objects', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(dataArray1));
     await alter('pick', ['name', 'user.fname'])(apiEvent);
     apiEvent.getData<Object[]>().forEach(v => {
@@ -35,8 +35,8 @@ describe('PlatformCallbacks:alter', () => {
 
   it('should discard properties in an object', async () => {
     const request = new Request('HTTP');
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(dataObj1));
     await alter('omit', ['name', 'user.fname', 'posts'])(apiEvent);
     Object.keys(apiEvent.getData()).length.should.equal(2);

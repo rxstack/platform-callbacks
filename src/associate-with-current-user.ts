@@ -1,6 +1,5 @@
 import {
-  ApiOperationCallback,
-  ApiOperationEvent
+  ApiOperationCallback, OperationEvent,
 } from '@rxstack/platform';
 import {
   MethodNotAllowedException,
@@ -11,8 +10,8 @@ import * as _ from 'lodash';
 import {assertToken, getProperty} from './utils';
 
 export const associateWithCurrentUser = (options: CurrentUserOptions): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    validateEventTypeOperation(event.eventType);
+  return async (event: OperationEvent): Promise<void> => {
+    validateEventTypeOperation(event.eventType as OperationEventsEnum);
     const token = event.request.token;
     assertToken(token);
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
@@ -25,7 +24,8 @@ export const associateWithCurrentUser = (options: CurrentUserOptions): ApiOperat
 
 const validateEventTypeOperation = (eventType: OperationEventsEnum): void => {
   const operations = [
-    OperationEventsEnum.PRE_WRITE
+    OperationEventsEnum.INIT,
+    OperationEventsEnum.PRE_EXECUTE
   ];
   if (!operations.includes(eventType)) {
     throw new MethodNotAllowedException(`EventType ${eventType} is not supported.`);

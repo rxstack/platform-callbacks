@@ -1,7 +1,7 @@
 import {setSource} from '../../src/index';
 import {
-  ApiOperationEvent, OperationEventsEnum,
-  OperationTypesEnum
+  OperationEvent,
+  OperationEventsEnum
 } from '@rxstack/platform';
 import {Request} from '@rxstack/core';
 import {Injector} from 'injection-js';
@@ -15,16 +15,16 @@ describe('PlatformCallbacks:utils:set-source', () => {
   it('should get request.body', async () => {
     const request = new Request('HTTP');
     request.body = 'data';
-    const event = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    event.eventType = OperationEventsEnum.PRE_WRITE;
+    const event = new OperationEvent(request, injector, app_create_metadata);
+    event.eventType = OperationEventsEnum.PRE_EXECUTE;
     setSource(event, 'new data');
     request.body.should.equal('new data');
   });
 
-  it('should get event.getData', async () => {
+  it('should set data', async () => {
     const request = new Request('HTTP');
-    const event = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    event.eventType = OperationEventsEnum.POST_WRITE;
+    const event = new OperationEvent(request, injector, app_create_metadata);
+    event.eventType = OperationEventsEnum.POST_EXECUTE;
     event.setData('data');
     setSource(event, 'new data');
     event.getData().should.equal('new data');

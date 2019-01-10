@@ -30,7 +30,7 @@
   "dependencies": {
     "@rxstack/core": "^0.1.2",
     "@rxstack/exceptions": "^0.1.3",
-    "@rxstack/platform": "^0.1.2",
+    "@rxstack/platform": "^0.1.4",
     "@rxstack/query-filter": "^0.1.1",
     "class-transformer": "^0.1.10",
     "class-validator": "^0.9.1",
@@ -54,9 +54,9 @@
     "sinon": "^6.2.0",
     "source-map-support": "^0.4.15",
     "ts-node": "^3.1.0",
-    "tslint": "^5.9.1",
+    "tslint": "^5.12.0",
     "tslint-sonarts": "^1.8.0",
-    "typescript": "^3.2.1"
+    "typescript": "^3.2.2"
   },
   "bugs": {
     "url": "https://github.com/rxstack/platform-callbacks/issues"

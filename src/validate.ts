@@ -1,23 +1,19 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent,
+  OperationEvent,
   OperationEventsEnum,
-  WriteOperationMetadata
 } from '@rxstack/platform';
 import {validate as _validate, ValidatorOptions} from 'class-validator';
 import * as _ from 'lodash';
-import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
+import {BadRequestException} from '@rxstack/exceptions';
 import {classToPlain, plainToClass} from 'class-transformer';
 import {Constructable} from './interfaces';
+import {restrictToOperations} from './utils';
 
 export const validate = <T>(type: Constructable<T> | string, options?: ValidatorOptions): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    const metadata = event.metadata as WriteOperationMetadata<any>;
-    if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
-      throw new MethodNotAllowedException('Validate callback is not supported.');
-    }
-    const resolvedOptions = resolveOptions(metadata.type, event.request.attributes.get('validation_groups'), options);
-    event.request.body = await processData(event.request.body, type, resolvedOptions);
+  return async (event: OperationEvent): Promise<void> => {
+    restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
+    event.request.body = await processData(event.request.body, type, resolveOptions(options));
   };
 };
 
@@ -40,12 +36,11 @@ const validateItem = async <T>(data: Object, type: Constructable<T> | string,
   return classToPlain(input);
 };
 
-const resolveOptions = (type: string, groups?: Array<string>, options?: ValidatorOptions): ValidatorOptions => {
+const resolveOptions = (options?: ValidatorOptions): ValidatorOptions => {
   const defaults =  {
     validationError: { target: false },
     whitelist: true,
-    groups: groups,
-    skipMissingProperties: type === 'PATCH'
+    skipMissingProperties: false
   };
   return options ? _.merge(defaults, options) : defaults;
 };

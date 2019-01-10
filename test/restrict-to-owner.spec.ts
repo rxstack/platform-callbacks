@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata, app_list_metadata} from './mocks/shared/app.metadata';
 import {
   ForbiddenException
@@ -16,8 +16,8 @@ describe('PlatformCallbacks:restrict-to-owner', () => {
   it('should pass', async () => {
     const request = new Request('HTTP');
     request.token = new Token();
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     apiEvent.setData({
       'userId': 'admin'
     });
@@ -27,8 +27,8 @@ describe('PlatformCallbacks:restrict-to-owner', () => {
   it('should pass with array data', async () => {
     const request = new Request('HTTP');
     request.token = new Token();
-    const apiEvent = new ApiOperationEvent(request, injector, app_list_metadata, OperationTypesEnum.LIST);
-    apiEvent.eventType = OperationEventsEnum.PRE_COLLECTION_READ;
+    const apiEvent = new OperationEvent(request, injector, app_list_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     apiEvent.setData([
       {
         'userId': 'admin'
@@ -40,8 +40,8 @@ describe('PlatformCallbacks:restrict-to-owner', () => {
   it('should throw ForbiddenException', async () => {
     const request = new Request('HTTP');
     request.token = new Token();
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.PRE_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     apiEvent.setData(undefined);
     let exception: ForbiddenException;
     try {

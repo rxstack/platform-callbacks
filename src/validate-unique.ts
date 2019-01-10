@@ -1,33 +1,24 @@
 import {
   ApiOperationCallback,
-  ApiOperationEvent,
-  OperationEventsEnum, ServiceInterface,
-  WriteOperationMetadata
+  OperationEvent, OperationEventsEnum,
+  ServiceInterface,
 } from '@rxstack/platform';
-import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
+import {BadRequestException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
+import {ValidateUniqueOptions} from './interfaces';
+import {restrictToOperations} from './utils';
 
-export interface ValidateUniqueOptions {
-  properties: string[];
-  propertyPath: string;
-  method?: string;
-  message?: string;
-}
-
-export const validateUnique = (options: ValidateUniqueOptions): ApiOperationCallback => {
-  return async (event: ApiOperationEvent): Promise<void> => {
-    const metadata = event.metadata as WriteOperationMetadata<any>;
-    if (event.eventType !== OperationEventsEnum.PRE_WRITE) {
-      throw new MethodNotAllowedException('ValidateUnique callback is not supported.');
-    }
-    const service = event.injector.get(metadata.service);
+export const validateUnique = <T>(options: ValidateUniqueOptions): ApiOperationCallback => {
+  return async (event: OperationEvent): Promise<void> => {
+    restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
+    const service = event.injector.get(options.service);
     const input = event.request.body;
     const data = _.isArray(event.getData()) ? event.getData<Array<Object>>() : [event.getData<Object>()];
     await processUniqueValidation(service, input, data, options);
   };
 };
 
-const processUniqueValidation = async <T>(service: ServiceInterface<T>, input: any, data: Array<Object>,
+const processUniqueValidation = async (service: ServiceInterface<any>, input: any, data: Array<Object>,
                                           options: ValidateUniqueOptions): Promise<void> => {
   const filteredData = data.filter((v) => _.isObject(v));
   if (_.isArray(input)) {
@@ -39,7 +30,7 @@ const processUniqueValidation = async <T>(service: ServiceInterface<T>, input: a
   }
 };
 
-const validateUniqueItem = async <T>(service: ServiceInterface<T>, input: Object,
+const validateUniqueItem = async (service: ServiceInterface<any>, input: Object,
                                      data: Array<Object>, options: ValidateUniqueOptions): Promise<void> => {
   const criteria = buildCriteria(input, options.properties);
   const method = options.method || 'findMany';

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
-import {ApiOperationEvent, OperationEventsEnum, OperationTypesEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_create_metadata, app_get_metadata} from './mocks/shared/app.metadata';
 import {doRename, rename} from '../src';
 import {BadRequestException} from '@rxstack/exceptions';
@@ -13,8 +13,8 @@ const request = sinon.createStubInstance(Request);
 describe('PlatformCallbacks:rename', () => {
 
   it('should rename a property in object', async () => {
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData({'_id': 1});
     await rename('_id', 'id')(apiEvent);
     const expected = '{"id":1}';
@@ -22,8 +22,8 @@ describe('PlatformCallbacks:rename', () => {
   });
 
   it('should rename a property in array of objects', async () => {
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData([
       {'_id': 1},
       {'_id': 2},
@@ -34,8 +34,8 @@ describe('PlatformCallbacks:rename', () => {
   });
 
   it('should rename a property in object with propertyPath', async () => {
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData({'user': {
       '_id': 'id'
       }});
@@ -45,8 +45,8 @@ describe('PlatformCallbacks:rename', () => {
   });
 
   it('should rename a property in array of object with propertyPath', async () => {
-    const apiEvent = new ApiOperationEvent(request, injector, app_get_metadata, OperationTypesEnum.GET);
-    apiEvent.eventType = OperationEventsEnum.POST_READ;
+    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
+    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData({'users': [
         { '_id': 1 },
         { '_id': 2 },
@@ -57,8 +57,8 @@ describe('PlatformCallbacks:rename', () => {
   });
 
   it('should throw BadRequestException on invalid source', async () => {
-    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     let exception: BadRequestException;
     try {
       await rename('_id', 'id')(apiEvent);
@@ -69,8 +69,8 @@ describe('PlatformCallbacks:rename', () => {
   });
 
   it('should throw BadRequestException on invalid key', async () => {
-    const apiEvent = new ApiOperationEvent(request, injector, app_create_metadata, OperationTypesEnum.WRITE);
-    apiEvent.eventType = OperationEventsEnum.PRE_WRITE;
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = {};
     let exception: BadRequestException;
     try {
