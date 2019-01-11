@@ -10,7 +10,6 @@ describe('PlatformCallbacks:utils:assert-token', () => {
   });
 
   it('should throw UnauthorizedException', async () => {
-    const data = {};
     let exception: UnauthorizedException;
 
     try {

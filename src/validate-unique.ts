@@ -1,5 +1,5 @@
 import {
-  ApiOperationCallback,
+  OperationCallback,
   OperationEvent, OperationEventsEnum,
   ServiceInterface,
 } from '@rxstack/platform';
@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import {ValidateUniqueOptions} from './interfaces';
 import {restrictToOperations} from './utils';
 
-export const validateUnique = <T>(options: ValidateUniqueOptions): ApiOperationCallback => {
+export const validateUnique = <T>(options: ValidateUniqueOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
     const service = event.injector.get(options.service);

@@ -1,5 +1,5 @@
 import {
-  ApiOperationCallback, OperationEvent,
+  OperationCallback, OperationEvent,
   OperationEventsEnum
 } from '@rxstack/platform';
 import {BadRequestException} from '@rxstack/exceptions';
@@ -7,9 +7,9 @@ import * as _ from 'lodash';
 import {CurrentUserOptions} from './interfaces';
 import {assertToken, getProperty, restrictToOperations} from './utils';
 
-export const queryWithCurrentUser = (options: CurrentUserOptions): ApiOperationCallback => {
+export const queryWithCurrentUser = (options: CurrentUserOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
-    restrictToOperations(event.eventType, [OperationEventsEnum.INIT]);
+    restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
     const token = event.request.token;
     assertToken(token);

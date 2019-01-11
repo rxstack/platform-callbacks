@@ -16,7 +16,7 @@ describe('PlatformCallbacks:restrict-to-role', () => {
     const request = new Request('HTTP');
     request.token = new Token();
     const apiEvent = new OperationEvent(request, injector, app_get_metadata);
-    apiEvent.eventType = OperationEventsEnum.INIT;
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     await restrictToRole('ROLE_ADMIN')(apiEvent); // do nothing
   });
 
@@ -24,7 +24,7 @@ describe('PlatformCallbacks:restrict-to-role', () => {
     const request = new Request('HTTP');
     request.token = new Token();
     const apiEvent = new OperationEvent(request, injector, app_get_metadata);
-    apiEvent.eventType = OperationEventsEnum.INIT;
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     let exception: ForbiddenException;
     try {
       await restrictToRole('ROLE_USER')(apiEvent);

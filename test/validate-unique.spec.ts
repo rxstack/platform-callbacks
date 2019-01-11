@@ -25,25 +25,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     await app.stop();
   });
 
-  it('should throw MethodNotAllowedException on invalid operation', async () => {
-    const options: ValidateUniqueOptions = {
-      service: TaskService,
-      properties: ['id'],
-      propertyPath: 'id',
-    };
 
-    const request = new Request('HTTP');
-    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
-    apiEvent.eventType = OperationEventsEnum.INIT;
-    let exception: MethodNotAllowedException;
-
-    try {
-      await validateUnique(options)(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.statusCode.should.be.equal(405);
-  });
 
   it('should throw an exception on missing property', async () => {
     const options: ValidateUniqueOptions = {

@@ -1,5 +1,5 @@
 import {
-  ApiOperationCallback, OperationEvent, OperationEventsEnum,
+  OperationCallback, OperationEvent, OperationEventsEnum,
 } from '@rxstack/platform';
 import {
   ForbiddenException
@@ -8,7 +8,7 @@ import {CurrentUserOptions} from './interfaces';
 import * as _ from 'lodash';
 import {assertToken, getProperty, restrictToOperations} from './utils';
 
-export const restrictToOwner = (options?: CurrentUserOptions): ApiOperationCallback => {
+export const restrictToOwner = (options?: CurrentUserOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
     const token = event.request.token;

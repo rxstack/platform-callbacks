@@ -1,5 +1,5 @@
 import {
-  ApiOperationCallback,
+  OperationCallback,
   OperationEvent,
   OperationEventsEnum,
 } from '@rxstack/platform';
@@ -7,10 +7,10 @@ import {validate as _validate, ValidatorOptions} from 'class-validator';
 import * as _ from 'lodash';
 import {BadRequestException} from '@rxstack/exceptions';
 import {classToPlain, plainToClass} from 'class-transformer';
-import {Constructable} from './interfaces';
 import {restrictToOperations} from './utils';
+import {Constructable} from '@rxstack/utils';
 
-export const validate = <T>(type: Constructable<T> | string, options?: ValidatorOptions): ApiOperationCallback => {
+export const validate = <T>(type: Constructable<T> | string, options?: ValidatorOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
     event.request.body = await processData(event.request.body, type, resolveOptions(options));

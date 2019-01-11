@@ -12,7 +12,7 @@ const sinon = require('sinon');
 describe('PlatformCallbacks:utils:get-source', () => {
   const injector = sinon.createStubInstance(Injector);
 
-  it('should get request.body', async () => {
+  it('should get from request.body', async () => {
     const request = new Request('HTTP');
     request.body = {'id': 'test'};
     const event = new OperationEvent(request, injector, app_create_metadata);
@@ -21,7 +21,7 @@ describe('PlatformCallbacks:utils:get-source', () => {
     JSON.stringify(source).should.be.equal(JSON.stringify(request.body));
   });
 
-  it('should get event.getData', async () => {
+  it('should get from event.getData', async () => {
     const request = new Request('HTTP');
     const event = new OperationEvent(request, injector, app_create_metadata);
     event.eventType = OperationEventsEnum.POST_EXECUTE;

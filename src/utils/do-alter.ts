@@ -1,6 +1,7 @@
-import {AlterMethod, PartialDeep} from '../interfaces';
+import {AlterMethod} from '../interfaces';
 import {BadRequestException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
+import {PartialDeep} from '@rxstack/utils';
 
 export const doAlter = (
   methodName: AlterMethod,

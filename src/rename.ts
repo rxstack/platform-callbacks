@@ -1,12 +1,12 @@
 import {
-  ApiOperationCallback, OperationEvent,
+  OperationCallback, OperationEvent,
 } from '@rxstack/platform';
 import * as _ from 'lodash';
 import {BadRequestException} from '@rxstack/exceptions';
 import {getSource} from './utils/get-source';
 import {setSource} from './utils/set-source';
 
-export const rename = (key: string, newKey: string, propertyPath?: string): ApiOperationCallback => {
+export const rename = (key: string, newKey: string, propertyPath?: string): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     const source = getSource(event);
     const data = _.isArray(source) ? source.map(value => doRename(value, key, newKey, propertyPath)) :

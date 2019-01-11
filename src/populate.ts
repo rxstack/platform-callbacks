@@ -1,5 +1,5 @@
 import {
-  ApiOperationCallback, OperationEvent,
+  OperationCallback, OperationEvent,
   OperationEventsEnum
 } from '@rxstack/platform';
 import * as _ from 'lodash';
@@ -8,7 +8,7 @@ import {BadRequestException} from '@rxstack/exceptions';
 import {Injector} from 'injection-js';
 import {restrictToOperations} from './utils';
 
-export const populate = <T>(schema: PopulateSchema<T>): ApiOperationCallback => {
+export const populate = <T>(schema: PopulateSchema<T>): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     restrictToOperations(event.eventType, [OperationEventsEnum.POST_EXECUTE]);
     const data = event.getData();

@@ -1,17 +1,14 @@
 import {
-  ApiOperationCallback, OperationEvent,
+  OperationCallback, OperationEvent,
 } from '@rxstack/platform';
-import {
-  MethodNotAllowedException,
-} from '@rxstack/exceptions';
 import {CurrentUserOptions} from './interfaces';
 import {OperationEventsEnum} from '@rxstack/platform/dist/enums';
 import * as _ from 'lodash';
-import {assertToken, getProperty} from './utils';
+import {assertToken, getProperty, restrictToOperations} from './utils';
 
-export const associateWithCurrentUser = (options: CurrentUserOptions): ApiOperationCallback => {
+export const associateWithCurrentUser = (options: CurrentUserOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
-    validateEventTypeOperation(event.eventType as OperationEventsEnum);
+    restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
     const token = event.request.token;
     assertToken(token);
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
@@ -20,14 +17,4 @@ export const associateWithCurrentUser = (options: CurrentUserOptions): ApiOperat
       _.forEach(event.request.body, (item) => _.set(item, options.targetField, userId)) :
     _.set(event.request.body, options.targetField, userId);
   };
-};
-
-const validateEventTypeOperation = (eventType: OperationEventsEnum): void => {
-  const operations = [
-    OperationEventsEnum.INIT,
-    OperationEventsEnum.PRE_EXECUTE
-  ];
-  if (!operations.includes(eventType)) {
-    throw new MethodNotAllowedException(`EventType ${eventType} is not supported.`);
-  }
 };
