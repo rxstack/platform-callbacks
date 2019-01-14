@@ -2,17 +2,13 @@ import {
   OperationCallback,
   OperationEvent
 } from '@rxstack/platform';
-import * as _ from 'lodash';
 import {doAlter} from './utils/do-alter';
-import {getSource} from './utils/get-source';
-import {setSource} from './utils/set-source';
 import {AlterMethod} from './interfaces';
+import {mapEvent} from './utils';
 
 export const alter = (methodName: AlterMethod, fieldNames: string[], propertyPath?: string): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
-    const source = getSource(event);
-    const data = _.isArray(source) ? source.map(value => doAlter(methodName, value, fieldNames, propertyPath)) :
-      doAlter(methodName, source, fieldNames, propertyPath);
-    setSource(event, data);
+    mapEvent(event, doAlter, [methodName, fieldNames, propertyPath]);
   };
 };
+

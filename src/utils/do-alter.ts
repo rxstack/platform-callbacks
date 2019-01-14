@@ -4,8 +4,9 @@ import * as _ from 'lodash';
 import {PartialDeep} from '@rxstack/utils';
 
 export const doAlter = (
+  source: Object,
   methodName: AlterMethod,
-  source: Object, fieldNames: string[],
+  fieldNames: string[],
   propertyPath?: string): PartialDeep<Object>|PartialDeep<Object>[] => {
   const method = methodName === 'pick' ? _.pick : _.omit;
   const data = propertyPath ? _.get(source, propertyPath) : source;
