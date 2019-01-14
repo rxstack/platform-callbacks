@@ -3,7 +3,7 @@ import {getSource} from './get-source';
 import * as _ from 'lodash';
 import {setSource} from './set-source';
 
-export const mapEvent = (event: OperationEvent, method: Function, args: any[]): void => {
+export const mapToEventData = (event: OperationEvent, method: Function, args: any[]): void => {
   const source = getSource(event);
   let data: any;
   if (_.isArray(source)) {

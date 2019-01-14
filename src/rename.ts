@@ -3,11 +3,11 @@ import {
 } from '@rxstack/platform';
 import * as _ from 'lodash';
 import {BadRequestException} from '@rxstack/exceptions';
-import {mapEvent} from './utils';
+import {mapToEventData} from './utils';
 
 export const rename = (key: string, newKey: string, propertyPath?: string): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
-    mapEvent(event, doRename, [key, newKey, propertyPath]);
+    mapToEventData(event, doRename, [key, newKey, propertyPath]);
   };
 };
 
