@@ -1,6 +1,6 @@
 {
   "name": "@rxstack/platform-callbacks",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TBD",
   "private": false,
   "author": "Nikolay Georgiev <symfonist@gmail.com>",
@@ -63,6 +63,11 @@
     "url": "https://github.com/rxstack/platform-callbacks/issues"
   },
   "homepage": "https://github.com/rxstack/platform-callbacks",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "nyc": {
     "include": [
       "./src/**/*.ts"
