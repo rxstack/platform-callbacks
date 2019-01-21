@@ -2,9 +2,8 @@ import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
-import {app_create_metadata, app_get_metadata} from './mocks/shared/app.metadata';
+import {app_get_metadata} from './mocks/shared/app.metadata';
 import {doRename, rename} from '../src';
-import {BadRequestException} from '@rxstack/exceptions';
 
 const sinon = require('sinon');
 const injector = sinon.createStubInstance(Injector);
@@ -54,31 +53,6 @@ describe('PlatformCallbacks:rename', () => {
     await rename('_id', 'id', 'users')(apiEvent);
     const expected = '{"users":[{"id":1},{"id":2}]}';
     JSON.stringify(apiEvent.getData()).should.be.equal(expected);
-  });
-
-  it('should throw BadRequestException on invalid source', async () => {
-    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
-    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
-    let exception: BadRequestException;
-    try {
-      await rename('_id', 'id')(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.should.be.instanceOf(BadRequestException);
-  });
-
-  it('should throw BadRequestException on invalid key', async () => {
-    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
-    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
-    request.body = {};
-    let exception: BadRequestException;
-    try {
-      await rename('_id', 'id')(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.should.be.instanceOf(BadRequestException);
   });
 
   it('should rename using doRename', async () => {

@@ -2,6 +2,7 @@ import {AlterMethod} from '../interfaces';
 import {BadRequestException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
 import {PartialDeep} from '@rxstack/utils';
+import {getProperty} from './get-property';
 
 export const doAlter = (
   source: Object,
@@ -9,10 +10,7 @@ export const doAlter = (
   fieldNames: string[],
   propertyPath?: string): PartialDeep<Object>|PartialDeep<Object>[] => {
 
-  const data = propertyPath ? _.get(source, propertyPath) : source;
-  if (!data) {
-    throw new BadRequestException('Source in doAlter is not valid.');
-  }
+  const data = propertyPath ? getProperty(source, propertyPath) : source;
   const result = _.isArray(data) ? data.map((value: Object) => applyAlter(value, methodName, fieldNames)) :
     applyAlter(data, methodName, fieldNames);
 
