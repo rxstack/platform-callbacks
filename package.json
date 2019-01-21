@@ -1,7 +1,7 @@
 {
   "name": "@rxstack/platform-callbacks",
-  "version": "0.1.1",
-  "description": "TBD",
+  "version": "0.1.2",
+  "description": "RxStack platform specific middleware",
   "private": false,
   "author": "Nikolay Georgiev <symfonist@gmail.com>",
   "license": "MIT",

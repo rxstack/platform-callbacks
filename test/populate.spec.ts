@@ -7,7 +7,6 @@ import {UserService} from './mocks/populate/user.service';
 import {POPULATE_OPTIONS} from './mocks/populate/POPULATE_OPTIONS';
 import {populate} from '../src/populate';
 import * as _ from 'lodash';
-import {BadRequestException} from '@rxstack/exceptions';
 import {QueryInterface} from '@rxstack/query-filter';
 
 const objData = {
@@ -50,8 +49,8 @@ describe('PlatformCallbacks:populate', () => {
 
     await populate({
       service: UserService,
-      parentField: 'user',
-      childField: 'id',
+      targetField: 'user',
+      inverseField: 'id',
     })(apiEvent);
 
     _.isObject(apiEvent.getData()['user']).should.be.equal(true);
@@ -65,8 +64,8 @@ describe('PlatformCallbacks:populate', () => {
 
     await populate({
       service: UserService,
-      parentField: 'users',
-      childField: 'id',
+      targetField: 'users',
+      inverseField: 'id',
     })(apiEvent);
 
     _.forEach(apiEvent.getData()['users'], (v) => _.isObject(v).should.be.equal(true));
@@ -80,8 +79,8 @@ describe('PlatformCallbacks:populate', () => {
 
     await populate({
       service: UserService,
-      parentField: 'user',
-      childField: 'id',
+      targetField: 'user',
+      inverseField: 'id',
     })(apiEvent);
 
     _.isObject(apiEvent.getData()[0]['user']).should.be.equal(true);
@@ -97,33 +96,13 @@ describe('PlatformCallbacks:populate', () => {
 
     await populate({
       service: UserService,
-      parentField: 'users',
-      childField: 'id',
+      targetField: 'users',
+      inverseField: 'id',
     })(apiEvent);
 
     _.forEach(apiEvent.getData()[0]['users'], (v) => _.isObject(v).should.be.equal(true));
     apiEvent.getData()[1]['users'].length.should.be.equal(0);
   });
-
-  it('should throw an exception if path is not found', async () => {
-    const request = new Request('HTTP');
-    const apiEvent = new OperationEvent(request, injector, app_get_metadata);
-    apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
-    apiEvent.setData(_.cloneDeep(objData));
-    let exception: BadRequestException;
-
-    try {
-      await populate({
-        service: UserService,
-        parentField: 'unknown',
-        childField: 'id',
-      })(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.should.be.instanceOf(BadRequestException);
-  });
-
 
   it('should populate with a custom property name ', async () => {
     const request = new Request('HTTP');
@@ -133,8 +112,8 @@ describe('PlatformCallbacks:populate', () => {
 
     await populate({
       service: UserService,
-      parentField: 'user',
-      childField: 'id',
+      targetField: 'user',
+      inverseField: 'id',
       nameAs: 'renamed'
     })(apiEvent);
     _.isObject(apiEvent.getData()['renamed']).should.be.equal(true);
@@ -148,8 +127,8 @@ describe('PlatformCallbacks:populate', () => {
 
     await populate({
       service: UserService,
-      parentField: 'user',
-      childField: 'id',
+      targetField: 'user',
+      inverseField: 'id',
       method: 'customMethod'
     })(apiEvent);
 
@@ -164,12 +143,13 @@ describe('PlatformCallbacks:populate', () => {
     const q: QueryInterface = {where: {username: {'$eq': 'user-1'}}, limit: 2, skip: 0, sort: { id: -1 } };
     await populate({
       service: UserService,
-      parentField: 'users',
-      childField: 'id',
+      targetField: 'users',
+      inverseField: 'id',
       query: q
     })(apiEvent);
 
-    const expectedQuery = '{"where":{"id":{"$in":["u-1","u-2"]},"username":{"$eq":"user-1"}},"limit":2,"skip":0,"sort":{"id":-1}}';
+    const expectedQuery =
+      '{"where":{"id":{"$in":["u-1","u-2"]},"username":{"$eq":"user-1"}},"limit":2,"skip":0,"sort":{"id":-1}}';
     JSON.stringify(injector.get(UserService).lastQuery).should.be.equal(expectedQuery);
   });
 });

@@ -6,9 +6,9 @@ import {doAlter} from './utils/do-alter';
 import {AlterMethod} from './interfaces';
 import {mapToEventData} from './utils';
 
-export const alter = (methodName: AlterMethod, fieldNames: string[], propertyPath?: string): OperationCallback => {
+export const alter = (methodName: AlterMethod, fieldNames: string[], dataPath?: string): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
-    mapToEventData(event, doAlter, [methodName, fieldNames, propertyPath]);
+    mapToEventData(event, doAlter, [methodName, fieldNames, dataPath]);
   };
 };
 

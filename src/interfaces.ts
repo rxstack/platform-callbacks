@@ -11,8 +11,8 @@ export interface SoftDeleteOptions {
 
 export interface ObjectExistSchema<T> {
   service: Type<ServiceInterface<T>> | InjectionToken<ServiceInterface<T>>;
-  parentField: string;
-  childField: string;
+  targetField: string;
+  inverseField: string;
   method?: string;
   criteria?: Object;
   dataPath?: string;
@@ -20,8 +20,8 @@ export interface ObjectExistSchema<T> {
 
 export interface PopulateSchema<T> {
   service: Type<ServiceInterface<T>> | InjectionToken<ServiceInterface<T>>;
-  parentField: string;
-  childField: string;
+  targetField: string;
+  inverseField: string;
   method?: string;
   nameAs?: string;
   query?: QueryInterface;

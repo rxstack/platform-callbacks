@@ -20,9 +20,9 @@ const objectExistsItem = async <T>(source: Object, schema: ObjectExistSchema<T>,
 };
 
 const validateObject = async <T>(data: Object, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
-  const id = getProperty(data, schema.parentField);
+  const id = getProperty(data, schema.targetField);
   const service = injector.get(schema.service);
-  const defaultCriteria = {[schema.childField]: {'$eq': id}};
+  const defaultCriteria = {[schema.inverseField]: {'$eq': id}};
   const method = schema.method || 'findOne';
   const criteria = schema.criteria ? _.merge(defaultCriteria, schema.criteria) : defaultCriteria;
   const result = await service[method](criteria);

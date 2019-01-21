@@ -28,8 +28,8 @@ describe('PlatformCallbacks:object-exists', () => {
   it('should validate existence in an object', async () => {
     const options: ObjectExistSchema<any> = {
       service: UserService,
-      parentField: 'user',
-      childField: 'id'
+      targetField: 'user',
+      inverseField: 'id'
     };
 
     const request = new Request('HTTP');
@@ -44,8 +44,8 @@ describe('PlatformCallbacks:object-exists', () => {
   it('should validate existence in an array of objects', async () => {
     const options: ObjectExistSchema<any> = {
       service: UserService,
-      parentField: 'user',
-      childField: 'id'
+      targetField: 'user',
+      inverseField: 'id'
     };
 
     const request = new Request('HTTP');
@@ -61,8 +61,8 @@ describe('PlatformCallbacks:object-exists', () => {
   it('should validate existence in an array of objects with data path option', async () => {
     const options: ObjectExistSchema<any> = {
       service: UserService,
-      parentField: 'user',
-      childField: 'id',
+      targetField: 'user',
+      inverseField: 'id',
       dataPath: 'users'
     };
 
@@ -81,8 +81,8 @@ describe('PlatformCallbacks:object-exists', () => {
   it('should set custom criteria', async () => {
     const options: ObjectExistSchema<any> = {
       service: UserService,
-      parentField: 'user',
-      childField: 'id',
+      targetField: 'user',
+      inverseField: 'id',
       criteria: {id: {'$ne': 'u-2'}}
     };
 
@@ -101,8 +101,8 @@ describe('PlatformCallbacks:object-exists', () => {
   it('should throw an exception if object is not found', async () => {
     const options: ObjectExistSchema<any> = {
       service: UserService,
-      parentField: 'user',
-      childField: 'id'
+      targetField: 'user',
+      inverseField: 'id'
     };
 
     const request = new Request('HTTP');
@@ -125,8 +125,8 @@ describe('PlatformCallbacks:object-exists', () => {
   it('should throw an exception if data path is not valid', async () => {
     const options: ObjectExistSchema<any> = {
       service: UserService,
-      parentField: 'user',
-      childField: 'id',
+      targetField: 'user',
+      inverseField: 'id',
       dataPath: 'unknown'
     };
 

@@ -8,13 +8,13 @@ export const doAlter = (
   source: Object,
   methodName: AlterMethod,
   fieldNames: string[],
-  propertyPath?: string): PartialDeep<Object>|PartialDeep<Object>[] => {
+  dataPath?: string): PartialDeep<Object>|PartialDeep<Object>[] => {
 
-  const data = propertyPath ? getProperty(source, propertyPath) : source;
+  const data = dataPath ? getProperty(source, dataPath) : source;
   const result = _.isArray(data) ? data.map((value: Object) => applyAlter(value, methodName, fieldNames)) :
     applyAlter(data, methodName, fieldNames);
 
-  return propertyPath ? _.set(source, propertyPath, result) : result;
+  return dataPath ? _.set(source, dataPath, result) : result;
 };
 
 const applyAlter = (value: Object, methodName: AlterMethod, fieldNames: string[]): PartialDeep<Object> => {
