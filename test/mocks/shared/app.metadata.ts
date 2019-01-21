@@ -45,3 +45,10 @@ export const app_remove_metadata: ResourceOperationMetadata<TaskModel> = {
   transports: ['HTTP', 'SOCKET'],
   service: NoopService,
 };
+
+export const app_bulk_create_metadata: ResourceOperationMetadata<TaskModel> = {
+  type: ResourceOperationTypesEnum.BULK_CREATE,
+  name: 'app_bulk_create',
+  transports: ['SOCKET'],
+  service: NoopService,
+};

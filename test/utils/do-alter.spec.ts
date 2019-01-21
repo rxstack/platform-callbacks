@@ -36,8 +36,23 @@ describe('PlatformCallbacks:utils:do-alter', () => {
     Object.keys(result['user']).length.should.equal(1);
   });
 
-  it('should throw BadRequestException', async () => {
+  it('should throw exception if property path is not valid', async () => {
     const data = {};
+    let exception: BadRequestException;
+
+    try {
+      doAlter(data, 'omit', ['name'], 'user');
+    } catch (e) {
+      exception = e;
+    }
+    exception.should.be.instanceOf(BadRequestException);
+  });
+
+
+  it('should throw exception if value is not an object', async () => {
+    const data = {
+      'user': 'test'
+    };
     let exception: BadRequestException;
 
     try {

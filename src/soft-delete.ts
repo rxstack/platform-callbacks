@@ -11,11 +11,15 @@ import {SoftDeleteOptions} from './interfaces';
 export const softDelete = (options?: SoftDeleteOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
-    options = _.merge({deleteField: 'deletedAt'}, options);
+    options = _.merge({deleteField: 'deletedAt', addOnCreate: false}, options);
     const metadata = event.metadata as ResourceOperationMetadata<any>;
     const service = event.injector.get(metadata.service);
 
     switch (metadata.type) {
+      case ResourceOperationTypesEnum.CREATE:
+      case ResourceOperationTypesEnum.BULK_CREATE:
+        addDeleteField(event, options);
+        break;
       case ResourceOperationTypesEnum.LIST:
       case ResourceOperationTypesEnum.PATCH:
       case ResourceOperationTypesEnum.BULK_REMOVE:
@@ -29,10 +33,16 @@ export const softDelete = (options?: SoftDeleteOptions): OperationCallback => {
         validateObject(event, options);
         await handleRemove(event, options, service);
         break;
-      default:
-        throw new MethodNotAllowedException(`Resource operation ${metadata.type} is not allowed.`);
     }
   };
+};
+
+const addDeleteField = (event: OperationEvent, options: SoftDeleteOptions): void => {
+  if (options.addOnCreate) {
+    const data = event.request.body;
+    _.isArray(data) ? data.forEach((v) => _.set(v, options.deleteField, null))
+      : _.set(data, options.deleteField, null);
+  }
 };
 
 const modifyCriteria = (event: OperationEvent, options: SoftDeleteOptions): void => {

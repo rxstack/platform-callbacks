@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import {Injector} from 'injection-js';
 import {Application, Kernel, Request} from '@rxstack/core';
 import {VALIDATE_UNIQUE_OPTIONS} from './mocks/validate-unique/VALIDATE_UNIQUE_OPTIONS';
-import {BadRequestException, MethodNotAllowedException} from '@rxstack/exceptions';
+import {BadRequestException} from '@rxstack/exceptions';
 import {validateUnique, ValidateUniqueOptions} from '../src';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {data1, data2, data_valid} from './mocks/validate-unique/data';
@@ -23,28 +23,6 @@ describe('PlatformCallbacks:validate-unique', () => {
 
   after(async() =>  {
     await app.stop();
-  });
-
-
-
-  it('should throw an exception on missing property', async () => {
-    const options: ValidateUniqueOptions = {
-      service: TaskService,
-      properties: ['id'],
-      propertyPath: 'id',
-    };
-
-    const request = new Request('HTTP');
-    const apiEvent = new OperationEvent(request, injector, app_task_metadata);
-    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
-    let exception: BadRequestException;
-
-    try {
-      await validateUnique(options)(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.statusCode.should.be.equal(400);
   });
 
   it('should validate unique property in create mode and throw an exception', async () => {

@@ -6,6 +6,16 @@ export type AlterMethod = 'pick' | 'omit';
 
 export interface SoftDeleteOptions {
   deleteField?: string;
+  addOnCreate?: boolean;
+}
+
+export interface ObjectExistSchema<T> {
+  service: Type<ServiceInterface<T>> | InjectionToken<ServiceInterface<T>>;
+  parentField: string;
+  childField: string;
+  method?: string;
+  criteria?: Object;
+  dataPath?: string;
 }
 
 export interface PopulateSchema<T> {

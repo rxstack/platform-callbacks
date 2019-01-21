@@ -8,13 +8,21 @@ export const doAlter = (
   methodName: AlterMethod,
   fieldNames: string[],
   propertyPath?: string): PartialDeep<Object>|PartialDeep<Object>[] => {
-  const method = methodName === 'pick' ? _.pick : _.omit;
+
   const data = propertyPath ? _.get(source, propertyPath) : source;
   if (!data) {
     throw new BadRequestException('Source in doAlter is not valid.');
   }
-  const result = _.isArray(data) ? data.map((value: Object) => method(value, fieldNames)) :
-    method(data, fieldNames);
+  const result = _.isArray(data) ? data.map((value: Object) => applyAlter(value, methodName, fieldNames)) :
+    applyAlter(data, methodName, fieldNames);
 
   return propertyPath ? _.set(source, propertyPath, result) : result;
+};
+
+const applyAlter = (value: Object, methodName: AlterMethod, fieldNames: string[]): PartialDeep<Object> => {
+  const method = methodName === 'pick' ? _.pick : _.omit;
+  if (!_.isObject(value)) {
+    throw new BadRequestException('Value should be an object.');
+  }
+  return method(value, fieldNames);
 };

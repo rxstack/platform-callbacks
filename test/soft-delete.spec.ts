@@ -4,6 +4,7 @@ import {Application, Kernel, Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {APP_OPTIONS} from './mocks/shared/APP_OPTIONS';
 import {
+  app_bulk_create_metadata,
   app_create_metadata,
   app_get_metadata,
   app_list_metadata, app_patch_metadata,
@@ -27,6 +28,34 @@ describe('PlatformCallbacks:soft-delete', () => {
 
   after(async() =>  {
     await app.stop();
+  });
+
+  it('should set delete field on create', async () => {
+    const request = new Request('HTTP');
+    request.body = {};
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
+    await softDelete({addOnCreate: true})(apiEvent);
+    (request.body['deletedAt'] === null).should.be.equal(true);
+  });
+
+  it('should set delete field on bulk create', async () => {
+    const request = new Request('HTTP');
+    request.body = [{}, {}];
+    const apiEvent = new OperationEvent(request, injector, app_bulk_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
+    await softDelete({addOnCreate: true})(apiEvent);
+    request.body.length.should.be.equal(2);
+    _.forEach(request.body, (v) => (v['deletedAt'] === null).should.be.equal(true));
+  });
+
+  it('should noy set delete field on create', async () => {
+    const request = new Request('HTTP');
+    request.body = {};
+    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
+    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
+    await softDelete()(apiEvent);
+    (!!request.body['deletedAt']).should.be.equal(false);
   });
 
   it('should modify the criteria', async () => {
@@ -85,20 +114,6 @@ describe('PlatformCallbacks:soft-delete', () => {
   it('should throw MethodNotAllowedException if not set query or criteria', async () => {
     const request = new Request('HTTP');
     const apiEvent = new OperationEvent(request, injector, app_patch_metadata);
-    apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
-    let exception: MethodNotAllowedException;
-
-    try {
-      await softDelete()(apiEvent);
-    } catch (e) {
-      exception = e;
-    }
-    exception.should.be.instanceOf(MethodNotAllowedException);
-  });
-
-  it('should throw MethodNotAllowedException if resource operation is not allowed', async () => {
-    const request = new Request('HTTP');
-    const apiEvent = new OperationEvent(request, injector, app_create_metadata);
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     let exception: MethodNotAllowedException;
 

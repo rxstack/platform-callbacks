@@ -6,7 +6,7 @@ import {
 import {BadRequestException} from '@rxstack/exceptions';
 import * as _ from 'lodash';
 import {ValidateUniqueOptions} from './interfaces';
-import {restrictToOperations} from './utils';
+import {getProperty, restrictToOperations} from './utils';
 
 export const validateUnique = <T>(options: ValidateUniqueOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
@@ -43,11 +43,7 @@ const validateUniqueItem = async (service: ServiceInterface<any>, input: Object,
 const buildCriteria = (input: Object, properties: Array<string>): Object => {
   const criteria = { };
   properties.forEach(field => {
-    const value = _.get(input, field);
-    if (!value) {
-      throw new BadRequestException(`ValidateUnique : missing property: ${field}`);
-    }
-    criteria[field] = { '$eq': value };
+    criteria[field] = { '$eq': getProperty(input, field) };
   });
 
   return criteria;

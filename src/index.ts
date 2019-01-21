@@ -15,3 +15,4 @@ export * from './restrict-to-owner';
 export * from './associate-with-current-user';
 export * from './restrict-to-authenticated-user';
 export * from './query-filter';
+export * from './object-exists';
