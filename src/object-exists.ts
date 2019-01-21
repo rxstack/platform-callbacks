@@ -10,15 +10,18 @@ import {ObjectExistSchema} from './interfaces';
 export const objectExists = <T>(schema: ObjectExistSchema<T>): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
-    const input = event.request.body;
-    if (_.isArray(input)) {
-      for (let i = 0; i < input.length; i++) {
-        await objectExistsItem(input[i], schema, event.injector);
-      }
-    } else {
-      await objectExistsItem(input, schema, event.injector);
-    }
+    await processData(event.request.body, schema, event.injector);
   };
+};
+
+const processData = async <T>(input: any, schema: ObjectExistSchema<T>, injector: Injector) => {
+  if (_.isArray(input)) {
+    for (let i = 0; i < input.length; i++) {
+      await objectExistsItem(input[i], schema, injector);
+    }
+  } else {
+    await objectExistsItem(input, schema, injector);
+  }
 };
 
 const objectExistsItem = async <T>(source: Object, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
