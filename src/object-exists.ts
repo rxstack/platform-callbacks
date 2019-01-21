@@ -28,14 +28,14 @@ const objectExistsItem = async <T>(source: Object, schema: ObjectExistSchema<T>,
   const data = schema.dataPath ? getProperty(source, schema.dataPath) : source;
   if (_.isArray(data)) {
     for (let i = 0; i < data.length; i++) {
-      await checkExists(data[i], schema, injector);
+      await validate(data[i], schema, injector);
     }
   } else {
-    await checkExists(data, schema, injector);
+    await validate(data, schema, injector);
   }
 };
 
-const checkExists = async <T>(data: Object, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
+const validate = async <T>(data: Object, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
   const id = getProperty(data, schema.parentField);
   const service = injector.get(schema.service);
   const defaultCriteria = {[schema.childField]: {'$eq': id}};
