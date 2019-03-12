@@ -1,11 +1,11 @@
 import {Injectable} from 'injection-js';
-import {QueryInterface, SortInterface} from '@rxstack/query-filter';
+import {QueryInterface} from '@rxstack/query-filter';
 import {ServiceInterface, ServiceOptions} from '@rxstack/platform';
 
 @Injectable()
 export class NoopService implements ServiceInterface<any> {
 
-  options: ServiceOptions = { idField: 'id' };
+  options: ServiceOptions = { idField: 'id', defaultLimit: 25 };
 
   async insertOne(data: Object): Promise<any> {
     return data;
@@ -33,7 +33,12 @@ export class NoopService implements ServiceInterface<any> {
     return 0;
   }
 
-  async findOne(criteria: Object, sort?: SortInterface): Promise<any> {
+
+  async find(id: any): Promise<any> {
+    return null;
+  }
+
+  async findOne(criteria: Object): Promise<any> {
     return null;
   }
 
