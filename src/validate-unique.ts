@@ -59,18 +59,16 @@ const exists = (result: Object, data: Array<Object>, properties: Array<string>):
 };
 
 const throwException = (input: Object, options: ValidateUniqueOptions): void => {
-  const message = options.message || 'validation.not_unique';
+  const message = options.message || 'Value is not unique';
   const exception = new BadRequestException('Validation Failed');
-  exception.data = [
-    {
-      target: null,
-      property: options.propertyPath,
-      value: _.get(input, options.properties[0]),
-      constraints: {
-        'unique': message
-      },
-      children: []
-    }
-  ];
+  exception.data = {
+    errors: [
+      {
+        path: options.errorPath,
+        value: _.get(input, options.properties[0]),
+        message: message
+      }
+    ]
+  };
   throw exception;
 };

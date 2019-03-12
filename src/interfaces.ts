@@ -35,7 +35,7 @@ export interface CurrentUserOptions {
 export interface ValidateUniqueOptions {
   service: Type<ServiceInterface<any>> | InjectionToken<ServiceInterface<any>>;
   properties: string[];
-  propertyPath: string;
+  errorPath: string;
   method?: string;
   message?: string;
 }

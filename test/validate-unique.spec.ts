@@ -29,7 +29,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     const options: ValidateUniqueOptions = {
       service: TaskService,
       properties: ['id'],
-      propertyPath: 'id',
+      errorPath: 'id',
     };
 
     const request = new Request('HTTP');
@@ -50,7 +50,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     const options: ValidateUniqueOptions = {
       service: TaskService,
       properties: ['id'],
-      propertyPath: 'id',
+      errorPath: 'id',
     };
 
     const request = new Request('HTTP');
@@ -71,7 +71,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     const options: ValidateUniqueOptions = {
       service: TaskService,
       properties: ['id'],
-      propertyPath: 'id',
+      errorPath: 'id',
     };
 
     const request = new Request('HTTP');
@@ -85,7 +85,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     const options: ValidateUniqueOptions = {
       service: TaskService,
       properties: ['id'],
-      propertyPath: 'id',
+      errorPath: 'id',
     };
 
     const request = new Request('HTTP');
@@ -107,7 +107,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     const options: ValidateUniqueOptions = {
       service: TaskService,
       properties: ['id'],
-      propertyPath: 'id',
+      errorPath: 'id',
     };
 
     const request = new Request('HTTP');

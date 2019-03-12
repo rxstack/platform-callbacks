@@ -23,6 +23,7 @@
     - [setNow](#callbacks-set-now)
     - [softDelete](#callbacks-soft-delete)
     - [transform](#callbacks-transform)
+    - [validateUnique](#callbacks-validate-unique)
 
 
 ## <a name="installation"></a> Installation
@@ -461,6 +462,43 @@ import {transform} from '@rxstack/platform-callbacks';
   onPreExecute: [
     // ...
     transform(TaskTransformer, {groups: ['create']})
+  ]
+})
+```
+
+### <a name="callbacks-validate-unique"></a> validateUnique
+
+Validates that a particular field (or fields) is (are) unique.
+
+Available on:
+
+- `preExecute`
+
+`Options`: 
+
+- `service`: The type of service to fetch the records
+- `properties`: List of fields on which this object should be unique
+- `errorPath`: the path where the error should be mapped
+- `method`: service method (optional), defaults to `findMany`
+- `message`: error message (optional), default to `Value is not unique`
+
+Example: 
+
+```typescript
+// ...
+import {validateUnique} from '@rxstack/platform-callbacks';
+
+@Operation<ResourceOperationMetadata<Task>>({
+  // ...
+  onPreExecute: [
+    // ...
+    validateUnique({
+      service: TaskService,
+      properties: ['name'],
+      propertyPath: 'name',
+      method: 'findMany',
+      mesage: 'Property name should be unique'
+    })
   ]
 })
 ```
