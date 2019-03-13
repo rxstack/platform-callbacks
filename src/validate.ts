@@ -51,7 +51,9 @@ const doValidate = async <T>(type: Constructable<T> | string,
     : await _validate(input, options);
   if (errors.length > 0) {
     const exception = new BadRequestException('Validation Failed');
-    exception.data = errors;
+    exception.data = {
+      errors: errors
+    };
     throw exception;
   }
 };

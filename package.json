@@ -1,6 +1,6 @@
 {
   "name": "@rxstack/platform-callbacks",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "RxStack platform specific middleware",
   "private": false,
   "author": "Nikolay Georgiev <symfonist@gmail.com>",

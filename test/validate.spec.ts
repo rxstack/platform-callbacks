@@ -3,7 +3,7 @@ import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {BadRequestException} from '@rxstack/exceptions';
 import {validate} from '../src';
-import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
+import {OperationEvent, OperationEventsEnum, ValidationError} from '@rxstack/platform';
 import {TaskModel} from './mocks/validate/task.model';
 import {taskValidationSchema} from './mocks/validate/task.validation.schema';
 import {registerSchema} from 'class-validator';
@@ -28,7 +28,7 @@ describe('PlatformCallbacks:validate', () => {
       exception = e;
     }
     exception.statusCode.should.be.equal(400);
-    exception.data.length.should.be.equal(3);
+    exception.data.errors.length.should.be.equal(3);
   });
 
   it('should validate with errors on array', async () => {
@@ -45,7 +45,7 @@ describe('PlatformCallbacks:validate', () => {
     }
 
     exception.statusCode.should.be.equal(400);
-    exception.data.length.should.be.equal(3);
+    exception.data.errors.length.should.be.equal(3);
   });
 
 
