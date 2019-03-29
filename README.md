@@ -33,7 +33,7 @@
 npm install @rxstack/platform-callbacks --save
 
 // peer depencencies
-npm install  @rxstack/core@^0.1 @rxstack/platform@^0.1.10 @rxstack/exceptions@^0.1 @rxstack/query-filter@^0.1 @rxstack/security@^0.1 @rxstack/utils@^0.1 
+npm install @rxstack/core@^0.1 @rxstack/platform@^0.2 @rxstack/exceptions@^0.2 @rxstack/query-filter@^0.2 @rxstack/security@^0.2 @rxstack/utils@^0.2 
 ```
 
 ## <a name="callbacks"></a> Callbacks
