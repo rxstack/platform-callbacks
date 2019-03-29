@@ -76,7 +76,7 @@ import {alter} from '@rxstack/platform-callbacks';
 
 ### <a name="callbacks-rename"></a> rename
 
-Rename property in data and removes the original one.
+Rename property and removes the original one.
 
 Available on:
 
