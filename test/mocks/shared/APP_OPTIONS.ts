@@ -10,6 +10,5 @@ export const APP_OPTIONS: ApplicationOptions = {
   providers: [
     { provide: NoopService, useClass: NoopService },
   ],
-  servers: environmentPlatform.servers,
-  logger: environmentPlatform.logger
+  servers: environmentPlatform.servers
 };

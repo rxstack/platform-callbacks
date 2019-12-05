@@ -10,6 +10,5 @@ export const POPULATE_OPTIONS: ApplicationOptions = {
   providers: [
     { provide: UserService, useClass: UserService },
   ],
-  servers: environmentPlatform.servers,
-  logger: environmentPlatform.logger
+  servers: environmentPlatform.servers
 };

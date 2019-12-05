@@ -10,6 +10,5 @@ export const VALIDATE_UNIQUE_OPTIONS: ApplicationOptions = {
   providers: [
     { provide: TaskService, useClass: TaskService },
   ],
-  servers: environmentPlatform.servers,
-  logger: environmentPlatform.logger
+  servers: environmentPlatform.servers
 };
