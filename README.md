@@ -15,6 +15,7 @@
     - [associateWithCurrentUser](#callbacks-associate-with-current-user)
     - [queryWithCurrentUser](#callbacks-query-with-current-user)
     - [restrictToAuthenticatedUser](#callbacks-restrict-to-authenticated-user)
+    - [restrictToAnonymousUser](#callbacks-restrict-to-anonymous-user)
     - [restrictToOwner](#callbacks-restrict-to-owner)
     - [restrictToRole](#callbacks-restrict-to-role)
     - [objectExists](#callbacks-object-exists)
@@ -33,7 +34,7 @@
 npm install @rxstack/platform-callbacks --save
 
 // peer depencencies
-npm install @rxstack/core@^0.5 @rxstack/async-event-dispatcher@^0.5 @rxstack/platform@^0.5 @rxstack/exceptions@^0.5 @rxstack/query-filter@^0.5 @rxstack/security@^0.5 @rxstack/utils@^0.5 @rxstack/service-registry@^0.5 winston@^3.2.1
+npm install @rxstack/core@^0.6 @rxstack/async-event-dispatcher@^0.5 @rxstack/platform@^0.6 @rxstack/exceptions@^0.5 @rxstack/query-filter@^0.5 @rxstack/security@^0.6 @rxstack/utils@^0.5 @rxstack/service-registry@^0.5 winston@^3.2.1
 ```
 
 ## <a name="callbacks"></a> Callbacks
@@ -189,6 +190,29 @@ import {restrictToAuthenticatedUser} from '@rxstack/platform-callbacks';
   onPreExecute: [
     // ...
     restrictToAuthenticatedUser(false)
+  ]
+})
+```
+
+### <a name="callbacks-restrict-to-anonymous-user"></a> restrictToAnonymousUser
+
+Restricts resource to anonymous user `request.token`.
+
+Available on:
+
+- `preExecute`
+
+Example: 
+
+```typescript
+// ...
+import {restrictToAnonymousUser} from '@rxstack/platform-callbacks';
+
+@Operation<ResourceOperationMetadata<Task>>({
+  // ...
+  onPreExecute: [
+    // ...
+    restrictToAnonymousUser()
   ]
 })
 ```
@@ -594,9 +618,9 @@ import {validateUnique} from '@rxstack/platform-callbacks';
     validateUnique({
       service: TaskService,
       properties: ['name'],
-      propertyPath: 'name',
+      errorPath: 'name',
       method: 'findMany',
-      mesage: 'Property name should be unique'
+      message: 'Property name should be unique'
     })
   ]
 })

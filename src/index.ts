@@ -12,6 +12,7 @@ export * from './soft-delete';
 export * from './restrict-to-role';
 export * from './query-with-current-user';
 export * from './restrict-to-owner';
+export * from './restrict-to-anonymous-user';
 export * from './associate-with-current-user';
 export * from './restrict-to-authenticated-user';
 export * from './query-filter';
