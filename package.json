@@ -34,7 +34,7 @@
     "@rxstack/utils": "^0.5"
   },
   "dependencies": {
-    "class-transformer": "^0.1.10",
+    "class-transformer": "^0.3.1",
     "class-validator": "^0.9.1",
     "injection-js": "^2.3.0",
     "lodash": "^4.17.11",
