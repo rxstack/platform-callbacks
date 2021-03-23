@@ -505,56 +505,6 @@ Available on:
 - `options`: [`ValidatorOptions`](https://github.com/typestack/class-validator/blob/master/src/validation/ValidatorOptions.ts) (optional)
 
 
-Example with schema: 
-
-```typescript
-// ...
-import {validate} from '@rxstack/platform-callbacks';
-import {ValidationSchema} from 'class-validator';
-
-export const taskValidationSchema: ValidationSchema = {
-  name: 'TaskValidationSchema',
-  properties: {
-    'id': [
-      {
-        type: 'isNotEmpty',
-        constraints: [3],
-        groups: ['group1'],
-      }
-    ],
-    'name': [
-      {
-        type: 'minLength',
-        constraints: [3],
-        groups: ['group2'],
-      }
-    ],
-    'completed': [
-      {
-        type: 'isBoolean',
-        groups: ['group1'],
-      }
-    ]
-  }
-};
-
-@Operation<ResourceOperationMetadata<Task>>({
-  // ...
-  onPreExecute: [
-    // ...
-    validate(taskValidationSchema.name, { groups: ['group1'] })
-  ]
-})
-```
-
-> **Important:** you need to register the schema. 
-[`onBootstrap`](https://github.com/rxstack/rxstack/blob/master/packages/core/docs/application.md#bootstrap-event) event is the best place to do it:
-
-```typescript
-import {registerSchema} from 'class-validator';
-registerSchema(taskValidationSchema);
-```
-
 Example with type: 
 
 ```typescript

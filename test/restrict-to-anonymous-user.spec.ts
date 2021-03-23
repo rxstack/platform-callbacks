@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
@@ -9,11 +8,11 @@ import {Token} from './mocks/shared/token';
 import {UnauthorizedException} from '@rxstack/exceptions';
 
 const sinon = require('sinon');
-const injector = sinon.createStubInstance(Injector);
+const injector = sinon.stub();
 
 describe('PlatformCallbacks:restrict-to-anonymous-user', () => {
-
   it('should pass anonymous user', async () => {
+
     const request = new Request('HTTP');
     request.token = new AnonymousToken();
     const apiEvent = new OperationEvent(request, injector, app_get_metadata);
@@ -34,5 +33,4 @@ describe('PlatformCallbacks:restrict-to-anonymous-user', () => {
     }
     exception.should.be.instanceOf(UnauthorizedException);
   });
-
 });

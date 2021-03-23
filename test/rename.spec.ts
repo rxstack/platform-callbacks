@@ -1,13 +1,12 @@
 import 'reflect-metadata';
-import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
 import {doRename, rename} from '../src';
 
 const sinon = require('sinon');
-const injector = sinon.createStubInstance(Injector);
-const request = sinon.createStubInstance(Request);
+const injector = sinon.stub();
+const request = sinon.stub();
 
 describe('PlatformCallbacks:rename', () => {
 

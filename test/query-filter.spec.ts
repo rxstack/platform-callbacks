@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {queryFilter} from '../src';
@@ -9,7 +8,7 @@ import * as _ from 'lodash';
 import {MethodNotAllowedException} from '@rxstack/exceptions';
 
 const sinon = require('sinon');
-const injector = sinon.createStubInstance(Injector);
+const injector = sinon.stub();
 
 describe('PlatformCallbacks:query-filter', () => {
 

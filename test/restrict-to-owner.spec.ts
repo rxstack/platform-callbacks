@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata, app_list_metadata} from './mocks/shared/app.metadata';
@@ -10,7 +9,7 @@ import {restrictToOwner} from '../src/restrict-to-owner';
 import {Token} from './mocks/shared/token';
 
 const sinon = require('sinon');
-const injector = sinon.createStubInstance(Injector);
+const injector = sinon.stub();
 
 describe('PlatformCallbacks:restrict-to-owner', () => {
   it('should pass', async () => {
