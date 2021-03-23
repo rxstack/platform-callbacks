@@ -6,7 +6,6 @@ export const taskValidationSchema: ValidationSchema = {
     'id': [
       {
         type: 'isNotEmpty',
-        constraints: [3],
         groups: ['group1'],
       }
     ],

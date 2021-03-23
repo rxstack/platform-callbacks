@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import {Injector} from 'injection-js';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
@@ -8,7 +7,7 @@ import * as _ from 'lodash';
 import {alter} from '../src';
 
 const sinon = require('sinon');
-const injector = sinon.createStubInstance(Injector);
+const injector = sinon.stub();
 
 describe('PlatformCallbacks:alter', () => {
 

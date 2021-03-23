@@ -4,14 +4,12 @@ import {
   OperationEventsEnum
 } from '@rxstack/platform';
 import {Request} from '@rxstack/core';
-import {Injector} from 'injection-js';
 import {app_create_metadata} from '../mocks/shared/app.metadata';
 
 const sinon = require('sinon');
+const injector = sinon.stub();
 
 describe('PlatformCallbacks:utils:get-source', () => {
-  const injector = sinon.createStubInstance(Injector);
-
   it('should get from request.body', async () => {
     const request = new Request('HTTP');
     request.body = {'id': 'test'};
