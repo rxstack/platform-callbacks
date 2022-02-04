@@ -13,7 +13,7 @@ export const queryWithCurrentUser = (options: CurrentUserOptions): OperationCall
     options = _.merge({idField: 'id', targetField: 'userId'}, options);
     const token = event.request.token;
     assertToken(token);
-    let userProp = getProperty(token.getUser(), options.idField);
+    const userProp = getProperty(token.getUser(), options.idField);
     const criteria = {[options.targetField]: {'$eq': userProp}};
     if (event.request.attributes.has('query')) {
       _.merge(event.request.attributes.get('query'), {where: criteria});
