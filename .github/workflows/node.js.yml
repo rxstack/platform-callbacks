@@ -27,5 +27,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm install --no-save @rxstack/core@^0.7 @rxstack/async-event-dispatcher@^0.6 @rxstack/platform@^0.7 @rxstack/exceptions@^0.6 @rxstack/query-filter@^0.6 @rxstack/security@^0.7 @rxstack/utils@^0.6 @rxstack/service-registry@^0.6 winston@^3.35
+    - run: npm install @rxstack/core@^0.7 @rxstack/async-event-dispatcher@^0.6 @rxstack/platform@^0.7 @rxstack/exceptions@^0.6 @rxstack/query-filter@^0.6 @rxstack/security@^0.7 @rxstack/utils@^0.6 @rxstack/service-registry@^0.6 winston@^3.5
     - run: npm test
