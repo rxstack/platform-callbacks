@@ -1,6 +1,6 @@
 # RxStack Platform Callbacks
 
-[![Build Status](https://travis-ci.org/rxstack/platform-callbacks.svg?branch=master)](https://travis-ci.org/rxstack/platform-callbacks)
+[![Node.js CI](https://github.com/rxstack/platform-callbacks/actions/workflows/node.js.yml/badge.svg)](https://github.com/rxstack/platform-callbacks/actions/workflows/node.js.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0c6cfc515a30d1a04c48/maintainability)](https://codeclimate.com/github/rxstack/platform-callbacks/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0c6cfc515a30d1a04c48/test_coverage)](https://codeclimate.com/github/rxstack/platform-callbacks/test_coverage)
 
@@ -32,9 +32,6 @@
 
 ```
 npm install @rxstack/platform-callbacks --save
-
-// peer depencencies
-npm install @rxstack/core@^0.6 @rxstack/async-event-dispatcher@^0.5 @rxstack/platform@^0.6 @rxstack/exceptions@^0.5 @rxstack/query-filter@^0.5 @rxstack/security@^0.6 @rxstack/utils@^0.5 @rxstack/service-registry@^0.5 winston@^3.2.1
 ```
 
 ## <a name="callbacks"></a> Callbacks

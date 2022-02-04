@@ -8,17 +8,17 @@ import * as _ from 'lodash';
 import {ValidateUniqueOptions} from './interfaces';
 import {getProperty, restrictToOperations} from './utils';
 
-export const validateUnique = <T>(options: ValidateUniqueOptions): OperationCallback => {
+export const validateUnique = (options: ValidateUniqueOptions): OperationCallback => {
   return async (event: OperationEvent): Promise<void> => {
     restrictToOperations(event.eventType, [OperationEventsEnum.PRE_EXECUTE]);
     const service = event.injector.get(options.service);
     const input = event.request.body;
-    const data = _.isArray(event.getData()) ? event.getData<Array<Object>>() : [event.getData<Object>()];
+    const data = _.isArray(event.getData()) ? event.getData<Array<Record<string, any>>>() : [event.getData<Record<string, any>>()];
     await processUniqueValidation(service, input, data, options);
   };
 };
 
-const processUniqueValidation = async (service: ServiceInterface<any>, input: any, data: Array<Object>,
+const processUniqueValidation = async (service: ServiceInterface<any>, input: any, data: Array<Record<string, any>>,
                                           options: ValidateUniqueOptions): Promise<void> => {
   const filteredData = data.filter((v) => _.isObject(v));
   if (_.isArray(input)) {
@@ -30,17 +30,17 @@ const processUniqueValidation = async (service: ServiceInterface<any>, input: an
   }
 };
 
-const validateUniqueItem = async (service: ServiceInterface<any>, input: Object,
-                                     data: Array<Object>, options: ValidateUniqueOptions): Promise<void> => {
+const validateUniqueItem = async (service: ServiceInterface<any>, input: Record<string, any>,
+                                     data: Array<Record<string, any>>, options: ValidateUniqueOptions): Promise<void> => {
   const criteria = buildCriteria(input, options.properties);
   const method = options.method || 'findMany';
-  const result: Object[] = await service[method].call(service, {where: criteria, skip: 0, limit: 1});
+  const result: Record<string, any>[] = await service[method].call(service, {where: criteria, skip: 0, limit: 1});
   if (shouldThrowException(result, data, options)) {
     throwException(input, options);
   }
 };
 
-const buildCriteria = (input: Object, properties: Array<string>): Object => {
+const buildCriteria = (input: Record<string, any>, properties: Array<string>): Record<string, any> => {
   const criteria = { };
   properties.forEach(field => {
     criteria[field] = { '$eq': getProperty(input, field) };
@@ -49,16 +49,16 @@ const buildCriteria = (input: Object, properties: Array<string>): Object => {
   return criteria;
 };
 
-const shouldThrowException = (result: Array<Object>, data: Array<Object>, options: ValidateUniqueOptions): boolean => {
+const shouldThrowException = (result: Array<Record<string, any>>, data: Array<Record<string, any>>, options: ValidateUniqueOptions): boolean => {
   return false === (result.length === 0 || exists(result[0], data, options.properties));
 };
 
-const exists = (result: Object, data: Array<Object>, properties: Array<string>): boolean => {
+const exists = (result: Record<string, any>, data: Array<Record<string, any>>, properties: Array<string>): boolean => {
   const partialResult = _.pick(result, properties);
-  return !!_.find(data, (value: Object) => _.isEqual(partialResult, _.pick(value, properties)));
+  return !!_.find(data, (value: Record<string, any>) => _.isEqual(partialResult, _.pick(value, properties)));
 };
 
-const throwException = (input: Object, options: ValidateUniqueOptions): void => {
+const throwException = (input: Record<string, any>, options: ValidateUniqueOptions): void => {
   const message = options.message || 'Value is not unique';
   const exception = new BadRequestException('Validation Failed');
   exception.data = {

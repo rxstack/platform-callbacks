@@ -46,7 +46,7 @@ const addDeleteField = (event: OperationEvent, options: SoftDeleteOptions): void
 };
 
 const modifyCriteria = (event: OperationEvent, options: SoftDeleteOptions): void => {
-  const q: Object = {[options.deleteField]: {'$eq': null}};
+  const q: Record<string, any> = {[options.deleteField]: {'$eq': null}};
   if (event.request.attributes.has('query')) {
     _.merge(event.request.attributes.get('query'), {where: q});
   } else if (event.request.attributes.has('criteria')) {

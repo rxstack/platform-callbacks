@@ -17,14 +17,14 @@ export const populate = <T>(schema: PopulateSchema<T>): OperationCallback => {
   };
 };
 
-const getIds = (data: Object|Array<Object>, parentField: string): Array<any> => {
+const getIds = (data: Record<string, any>|Array<Record<string, any>>, parentField: string): Array<any> => {
   const ids: Array<any> = [];
   _.isArray(data) ? data.forEach(value => ids.push(...getItemIds(value, parentField)))
     : ids.push(...getItemIds(data, parentField));
   return[...new Set(ids)];
 };
 
-const getItemIds = (value: Object, parentField: string): Array<any> => {
+const getItemIds = (value: Record<string, any>, parentField: string): Array<any> => {
   const data = getProperty(value, parentField);
   return _.isArray(data) ? data : [data];
 };
@@ -37,7 +37,7 @@ const getResult = async <T>(ids: Array<any>, schema: PopulateSchema<T>, injector
   return await service[method](query);
 };
 
-const mapResult = <T>(schema: PopulateSchema<T>, data: Object, result: T[]) => {
+const mapResult = <T>(schema: PopulateSchema<T>, data: Record<string, any>, result: T[]) => {
   const value: any | Array<any> = _.get(data, schema.targetField);
   const items = _.isArray(value) ? _.filter(result, (i) => value.includes(i[schema.inverseField])) :
     _.find(result, (i) => i[schema.inverseField] === value);

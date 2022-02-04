@@ -14,12 +14,12 @@ export const objectExists = <T>(schema: ObjectExistSchema<T>): OperationCallback
   };
 };
 
-const objectExistsItem = async <T>(source: Object, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
+const objectExistsItem = async <T>(source: Record<string, any>, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
   const data = schema.dataPath ? getProperty(source, schema.dataPath) : source;
   await processData(validateObject, data, schema, injector);
 };
 
-const validateObject = async <T>(data: Object, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
+const validateObject = async <T>(data: Record<string, any>, schema: ObjectExistSchema<T>, injector: Injector): Promise<void> => {
   const id = getProperty(data, schema.targetField);
   const service = injector.get(schema.service);
   const defaultCriteria = {[schema.inverseField]: {'$eq': id}};
@@ -31,7 +31,7 @@ const validateObject = async <T>(data: Object, schema: ObjectExistSchema<T>, inj
   }
 };
 
-const processData = async <T>(func: Function, input: any, schema: ObjectExistSchema<T>, injector: Injector) => {
+const processData = async <T>(func: (... args: any[]) => void, input: any, schema: ObjectExistSchema<T>, injector: Injector) => {
   if (_.isArray(input)) {
     for (let i = 0; i < input.length; i++) {
       await func(input[i], schema, injector);

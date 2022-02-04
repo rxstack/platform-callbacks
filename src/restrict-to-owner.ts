@@ -21,7 +21,7 @@ export const restrictToOwner = (options?: CurrentUserOptions): OperationCallback
   };
 };
 
-const checkData = (data: Object, userProp: any, targetField: string): void => {
+const checkData = (data: Record<string, any>, userProp: any, targetField: string): void => {
   const targetId = _.get(data, targetField);
   if (userProp !== targetId) {
     throw new ForbiddenException();

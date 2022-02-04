@@ -14,7 +14,7 @@ export interface ObjectExistSchema<T> {
   targetField: string;
   inverseField: string;
   method?: string;
-  criteria?: Object;
+  criteria?: Record<string, any>;
   dataPath?: string;
 }
 

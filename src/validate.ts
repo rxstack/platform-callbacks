@@ -29,8 +29,8 @@ const processData = async <T>(data: any, type: Constructable<T> | string,
   return data;
 };
 
-const validateItem = async <T>(data: Object, type: Constructable<T> | string,
-                               options?: ValidatorOptions): Promise<Object> => {
+const validateItem = async <T>(data: Record<string, any>, type: Constructable<T> | string,
+                               options?: ValidatorOptions): Promise<Record<string, any>> => {
   const input = _.isString(type) ? data : plainToClass(type, data);
   await doValidate(type, input, options);
   return classToPlain(input);
@@ -46,7 +46,7 @@ const resolveOptions = (options?: ValidatorOptions): ValidatorOptions => {
 };
 
 const doValidate = async <T>(type: Constructable<T> | string,
-                             input: Object, options?: ValidatorOptions): Promise<void> => {
+                             input: Record<string, any>, options?: ValidatorOptions): Promise<void> => {
   const errors = _.isString(type) ? await _validate(type, input, options)
     : await _validate(input, options);
   if (errors.length > 0) {

@@ -12,5 +12,5 @@ export const setNow = (...fieldNames: string[]): OperationCallback => {
   };
 };
 
-const doSetNow = (data: Object, fieldNames: Array<string>): void =>
+const doSetNow = (data: Record<string, any>, fieldNames: Array<string>): void =>
   fieldNames.forEach((path) => _.set(data, path, new Date()));

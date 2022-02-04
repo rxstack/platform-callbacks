@@ -10,14 +10,14 @@ export const rename = (key: string, newKey: string, dataPath?: string): Operatio
   };
 };
 
-export const doRename = (source: Object, key: string, newKey: string, dataPath?: string): Object|Object[] => {
+export const doRename = (source: Record<string, any>, key: string, newKey: string, dataPath?: string): Record<string, any>|Record<string, any>[] => {
   const data = dataPath ? getProperty(source, dataPath) : source;
-  const result = _.isArray(data) ? data.map((value: Object) => doRenameItem(value, key, newKey)) :
+  const result = _.isArray(data) ? data.map((value: Record<string, any>) => doRenameItem(value, key, newKey)) :
     doRenameItem(data, key, newKey);
   return dataPath ? _.set(source, dataPath, result) : result;
 };
 
-const doRenameItem = (data: Object, key: string, newKey: string): Object => {
+const doRenameItem = (data: Record<string, any>, key: string, newKey: string): Record<string, any> => {
   const value = getProperty(data, key);
   _.set(data, newKey, _.clone(value));
   _.unset(data, key);
