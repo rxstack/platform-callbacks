@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {queryFilter} from '../src';
@@ -29,9 +30,10 @@ describe('PlatformCallbacks:query-filter', () => {
       },
       limit: 10,
       skip: 0,
-      sort: 'null'
+      sort: null
     };
-    _.isEqual(event.request.attributes.get('query'), expected);
+
+    expect(_.isEqual(JSON.stringify(event.request.attributes.get('query')), JSON.stringify(expected))).toBeTruthy();
   });
 
   it('should throw MethodNotAllowedException if query does not exist.', async () => {
@@ -47,6 +49,6 @@ describe('PlatformCallbacks:query-filter', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(MethodNotAllowedException);
+    expect(exception).toBeInstanceOf(MethodNotAllowedException);
   });
 });

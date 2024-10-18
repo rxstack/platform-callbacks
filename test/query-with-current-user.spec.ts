@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_list_metadata, app_patch_metadata} from './mocks/shared/app.metadata';
@@ -22,7 +23,7 @@ describe('PlatformCallbacks:query-with-current-user', () => {
     request.attributes.set('query', {where: {id: {'$gt': 1}}});
     await queryWithCurrentUser({idField: 'username'})(apiEvent);
     const expected = JSON.parse('{"where":{"id":{"$gt":1},"userId":{"$eq":"admin"}}}');
-    _.isEqual(request.attributes.get('query'), expected).should.be.equal(true);
+    expect(_.isEqual(request.attributes.get('query'), expected)).toBeTruthy();
   });
 
   it('should add userId to the criteria', async () => {
@@ -33,7 +34,7 @@ describe('PlatformCallbacks:query-with-current-user', () => {
     request.attributes.set('criteria', {id: {'$gt': 1}});
     await queryWithCurrentUser({idField: 'username'})(apiEvent);
     const expected = JSON.parse('{"id":{"$gt":1},"userId":{"$eq":"admin"}}');
-    _.isEqual(request.attributes.get('criteria'), expected).should.be.equal(true);
+    expect(_.isEqual(request.attributes.get('criteria'), expected)).toBeTruthy();
   });
 
   it('should throw BadRequestException if query or criteria are missing', async () => {
@@ -47,6 +48,6 @@ describe('PlatformCallbacks:query-with-current-user', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(BadRequestException);
+    expect(exception).toBeInstanceOf(BadRequestException);
   });
 });

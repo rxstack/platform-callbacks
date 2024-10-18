@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Injector} from 'injection-js';
 import {Application, Kernel, Request} from '@rxstack/core';
 import {VALIDATE_UNIQUE_OPTIONS} from './mocks/validate-unique/VALIDATE_UNIQUE_OPTIONS';
@@ -15,13 +16,13 @@ describe('PlatformCallbacks:validate-unique', () => {
   let injector: Injector;
   let kernel: Kernel;
 
-  before(async() =>  {
+  beforeAll(async() =>  {
     await app.start();
     injector = app.getInjector();
     kernel = injector.get(Kernel);
   });
 
-  after(async() =>  {
+  afterAll(async() =>  {
     await app.stop();
   });
 
@@ -43,7 +44,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     } catch (e) {
       exception = e;
     }
-    exception.statusCode.should.be.equal(400);
+    expect(exception.statusCode).toBe(400);
   });
 
   it('should validate unique property in bulk create mode and throw an exception', async () => {
@@ -64,7 +65,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     } catch (e) {
       exception = e;
     }
-    exception.statusCode.should.be.equal(400);
+    expect(exception.statusCode).toBe(400);
   });
 
   it('should validate unique property in create mode successfully', async () => {
@@ -100,7 +101,7 @@ describe('PlatformCallbacks:validate-unique', () => {
     } catch (e) {
       exception = e;
     }
-    exception.statusCode.should.be.equal(400);
+    expect(exception.statusCode).toBe(400);
   });
 
   it('should validate with one unique property in update mode successfully', async () => {

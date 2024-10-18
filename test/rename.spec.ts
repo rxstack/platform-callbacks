@@ -1,9 +1,8 @@
 import 'reflect-metadata';
-import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
 import {doRename, rename} from '../src';
-
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 const sinon = require('sinon');
 const injector = sinon.stub();
 const request = sinon.stub();
@@ -16,7 +15,7 @@ describe('PlatformCallbacks:rename', () => {
     apiEvent.setData({'_id': 1});
     await rename('_id', 'id')(apiEvent);
     const expected = '{"id":1}';
-    JSON.stringify(apiEvent.getData()).should.be.equal(expected);
+    expect(JSON.stringify(apiEvent.getData())).toBe(expected);
   });
 
   it('should rename a property in array of objects', async () => {
@@ -28,7 +27,7 @@ describe('PlatformCallbacks:rename', () => {
     ]);
     await rename('_id', 'id')(apiEvent);
     const expected = '[{"id":1},{"id":2}]';
-    JSON.stringify(apiEvent.getData()).should.be.equal(expected);
+    expect(JSON.stringify(apiEvent.getData())).toBe(expected);
   });
 
   it('should rename a property in object with propertyPath', async () => {
@@ -39,7 +38,7 @@ describe('PlatformCallbacks:rename', () => {
       }});
     await rename('_id', 'id', 'user')(apiEvent);
     const expected = '{"user":{"id":"id"}}';
-    JSON.stringify(apiEvent.getData()).should.be.equal(expected);
+    expect(JSON.stringify(apiEvent.getData())).toBe(expected);
   });
 
   it('should rename a property in array of object with propertyPath', async () => {
@@ -51,7 +50,7 @@ describe('PlatformCallbacks:rename', () => {
     ]});
     await rename('_id', 'id', 'users')(apiEvent);
     const expected = '{"users":[{"id":1},{"id":2}]}';
-    JSON.stringify(apiEvent.getData()).should.be.equal(expected);
+    expect(JSON.stringify(apiEvent.getData())).toBe(expected);
   });
 
   it('should rename using doRename', async () => {
@@ -77,6 +76,6 @@ describe('PlatformCallbacks:rename', () => {
       doRename(value.items, '_id', 'id');
     });
     const expected = '[{"items":[{"id":1},{"id":2}],"id":1},{"items":[{"id":1},{"id":2}],"id":1}]';
-    JSON.stringify(data).should.be.equal(expected);
+    expect(JSON.stringify(data)).toBe(expected);
   });
 });

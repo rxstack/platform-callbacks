@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Injector} from 'injection-js';
 import {Application, Kernel, Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
@@ -31,13 +32,13 @@ describe('PlatformCallbacks:populate', () => {
   let injector: Injector;
   let kernel: Kernel;
 
-  before(async() =>  {
+  beforeAll(async() =>  {
     await app.start();
     injector = app.getInjector();
     kernel = injector.get(Kernel);
   });
 
-  after(async() =>  {
+  afterAll(async() =>  {
     await app.stop();
   });
 
@@ -52,8 +53,8 @@ describe('PlatformCallbacks:populate', () => {
       targetField: 'user',
       inverseField: 'id',
     })(apiEvent);
-
-    _.isObject(apiEvent.getData()['user']).should.be.equal(true);
+    const data: any = apiEvent.getData();
+    expect(_.isObject(data['user'])).toBeTruthy();
   });
 
   it('should populate from object data and array value', async () => {
@@ -67,8 +68,8 @@ describe('PlatformCallbacks:populate', () => {
       targetField: 'users',
       inverseField: 'id',
     })(apiEvent);
-
-    _.forEach(apiEvent.getData()['users'], (v) => _.isObject(v).should.be.equal(true));
+    const data: any = apiEvent.getData();
+    _.forEach(data['users'], (v) => expect(_.isObject(v)).toBeTruthy());
   });
 
   it('should populate from array data and string value', async () => {
@@ -82,9 +83,9 @@ describe('PlatformCallbacks:populate', () => {
       targetField: 'user',
       inverseField: 'id',
     })(apiEvent);
-
-    _.isObject(apiEvent.getData()[0]['user']).should.be.equal(true);
-    _.isObject(apiEvent.getData()[1]['user']).should.be.equal(true);
+    const data: any = apiEvent.getData();
+    expect(_.isObject(data[0]['user'])).toBeTruthy();
+    expect(_.isObject(data[1]['user'])).toBeTruthy();
   });
 
 
@@ -100,8 +101,9 @@ describe('PlatformCallbacks:populate', () => {
       inverseField: 'id',
     })(apiEvent);
 
-    _.forEach(apiEvent.getData()[0]['users'], (v) => _.isObject(v).should.be.equal(true));
-    apiEvent.getData()[1]['users'].length.should.be.equal(0);
+    const data: any = apiEvent.getData();
+    _.forEach(data[0]['users'], (v) => expect(_.isObject(v)).toBeTruthy());
+    expect(data[1]['users'].length).toBe(0);
   });
 
   it('should populate with a custom property name ', async () => {
@@ -116,7 +118,9 @@ describe('PlatformCallbacks:populate', () => {
       inverseField: 'id',
       nameAs: 'renamed'
     })(apiEvent);
-    _.isObject(apiEvent.getData()['renamed']).should.be.equal(true);
+
+    const data: any = apiEvent.getData();
+    expect(_.isObject(data['renamed'])).toBeTruthy();
   });
 
   it('should populate from a custom method', async () => {
@@ -131,8 +135,8 @@ describe('PlatformCallbacks:populate', () => {
       inverseField: 'id',
       method: 'customMethod'
     })(apiEvent);
-
-    _.isObject(apiEvent.getData()['user']).should.be.equal(true);
+    const data: any = apiEvent.getData();
+    expect(_.isObject(data['user'])).toBeTruthy();
   });
 
   it('should populate with custom query', async () => {
@@ -150,6 +154,6 @@ describe('PlatformCallbacks:populate', () => {
 
     const expectedQuery =
       '{"where":{"id":{"$in":["u-1","u-2"]},"username":{"$eq":"user-1"}},"limit":2,"skip":0,"sort":{"id":-1}}';
-    JSON.stringify(injector.get(UserService).lastQuery).should.be.equal(expectedQuery);
+    expect(JSON.stringify(injector.get(UserService).lastQuery)).toBe(expectedQuery);
   });
 });

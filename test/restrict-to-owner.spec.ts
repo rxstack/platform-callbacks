@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata, app_list_metadata} from './mocks/shared/app.metadata';
@@ -48,6 +49,6 @@ describe('PlatformCallbacks:restrict-to-owner', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(ForbiddenException);
+    expect(exception).toBeInstanceOf(ForbiddenException);
   });
 });

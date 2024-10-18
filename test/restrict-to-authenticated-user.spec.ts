@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
@@ -39,7 +40,7 @@ describe('PlatformCallbacks:restrict-to-authenticated-user', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(UnauthorizedException);
+    expect(exception).toBeInstanceOf(UnauthorizedException);
   });
 
   it('should throw UnauthorizedException if user is not fully authenticated', async () => {
@@ -54,6 +55,6 @@ describe('PlatformCallbacks:restrict-to-authenticated-user', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(UnauthorizedException);
+    expect(exception).toBeInstanceOf(UnauthorizedException);
   });
 });
