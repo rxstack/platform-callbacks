@@ -29,11 +29,11 @@ jobs:
     - run: npm ci
     - run: npm install @rxstack/core@^0.8 @rxstack/async-event-dispatcher@^0.8 @rxstack/platform@^0.8 @rxstack/exceptions@^0.8 @rxstack/query-filter@^0.8 @rxstack/security@^0.8 @rxstack/utils@^0.8 @rxstack/service-registry@^0.8 winston@^3.5
     - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v9.0.0
-        env:
-          CC_TEST_REPORTER_ID: 48e7b991532865979eea4ac807d430ab52affb81588771dbf91d7a0ad69dec47
-        with:
-          coverageCommand: npm run test
-          coverageLocations: |
-            ${{github.workspace}}/coverage/lcov.info:lcov
-          debug: true
+      uses: paambaati/codeclimate-action@v9.0.0
+      env:
+        CC_TEST_REPORTER_ID: 48e7b991532865979eea4ac807d430ab52affb81588771dbf91d7a0ad69dec47
+      with:
+        coverageCommand: npm run test
+        coverageLocations: |
+          ${{github.workspace}}/coverage/lcov.info:lcov
+        debug: true
