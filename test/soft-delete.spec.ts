@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Injector} from 'injection-js';
 import {Application, Kernel, Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
@@ -20,13 +21,13 @@ describe('PlatformCallbacks:soft-delete', () => {
   let injector: Injector;
   let kernel: Kernel;
 
-  before(async() =>  {
+  beforeAll(async() =>  {
     await app.start();
     injector = app.getInjector();
     kernel = injector.get(Kernel);
   });
 
-  after(async() =>  {
+  afterAll(async() =>  {
     await app.stop();
   });
 
@@ -36,7 +37,7 @@ describe('PlatformCallbacks:soft-delete', () => {
     const apiEvent = new OperationEvent(request, injector, app_create_metadata);
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     await softDelete({addOnCreate: true})(apiEvent);
-    (request.body['deletedAt'] === null).should.be.equal(true);
+    expect(request.body['deletedAt'] === null).toBeTruthy();
   });
 
   it('should set delete field on bulk create', async () => {
@@ -45,8 +46,8 @@ describe('PlatformCallbacks:soft-delete', () => {
     const apiEvent = new OperationEvent(request, injector, app_bulk_create_metadata);
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     await softDelete({addOnCreate: true})(apiEvent);
-    request.body.length.should.be.equal(2);
-    _.forEach(request.body, (v) => (v['deletedAt'] === null).should.be.equal(true));
+    expect(request.body.length).toBe(2);
+    _.forEach(request.body, (v) => expect(v['deletedAt'] === null).toBeTruthy());
   });
 
   it('should noy set delete field on create', async () => {
@@ -55,7 +56,7 @@ describe('PlatformCallbacks:soft-delete', () => {
     const apiEvent = new OperationEvent(request, injector, app_create_metadata);
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     await softDelete()(apiEvent);
-    (!!request.body['deletedAt']).should.be.equal(false);
+    expect(!!request.body['deletedAt']).toBeFalsy();
   });
 
   it('should modify the criteria', async () => {
@@ -65,7 +66,7 @@ describe('PlatformCallbacks:soft-delete', () => {
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     await softDelete()(apiEvent);
     const expected = JSON.parse('{ "id": { "$eq": 1 }, "deletedAt": { "$eq": null } }');
-    _.isEqual(request.attributes.get('criteria'), expected).should.be.equal(true);
+    expect(_.isEqual(request.attributes.get('criteria'), expected)).toBeTruthy();
   });
 
   it('should modify the query', async () => {
@@ -76,7 +77,7 @@ describe('PlatformCallbacks:soft-delete', () => {
     await softDelete()(apiEvent);
 
     const expected = JSON.parse('{"where":{"id":{"$eq":1},"deletedAt":{"$eq":null}}}');
-    _.isEqual(request.attributes.get('query'), expected).should.be.equal(true);
+    expect(_.isEqual(request.attributes.get('query'), expected)).toBeTruthy();
   });
 
   it('should successfully validate object', async () => {
@@ -99,7 +100,7 @@ describe('PlatformCallbacks:soft-delete', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(NotFoundException);
+    expect(exception).toBeInstanceOf(NotFoundException);
   });
 
   it('should soft delete the object and return response with status code 204', async () => {
@@ -108,7 +109,7 @@ describe('PlatformCallbacks:soft-delete', () => {
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     apiEvent.setData({});
     await softDelete()(apiEvent);
-    apiEvent.response.statusCode.should.be.equal(204);
+    expect(apiEvent.response.statusCode).toBe(204);
   });
 
   it('should throw MethodNotAllowedException if not set query or criteria', async () => {
@@ -122,7 +123,7 @@ describe('PlatformCallbacks:soft-delete', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(MethodNotAllowedException);
+    expect(exception).toBeInstanceOf(MethodNotAllowedException);
   });
 });
 

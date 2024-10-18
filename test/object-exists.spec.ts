@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Injector} from 'injection-js';
 import {Application, Kernel, Request} from '@rxstack/core';
 import {objectExists, ObjectExistSchema} from '../src';
@@ -15,13 +16,13 @@ describe('PlatformCallbacks:object-exists', () => {
   let injector: Injector;
   let kernel: Kernel;
 
-  before(async() =>  {
+  beforeAll(async() =>  {
     await app.start();
     injector = app.getInjector();
     kernel = injector.get(Kernel);
   });
 
-  after(async() =>  {
+  afterAll(async() =>  {
     await app.stop();
   });
 
@@ -95,7 +96,7 @@ describe('PlatformCallbacks:object-exists', () => {
     await objectExists(options)(apiEvent);
     const criteria = injector.get(UserService).lastCriteria;
     const expected = { id: { '$eq': 'u-1', '$ne': 'u-2' } };
-    _.isEqual(criteria, expected).should.be.equal(true);
+    expect(_.isEqual(criteria, expected)).toBeTruthy();
   });
 
   it('should throw an exception if object is not found', async () => {
@@ -119,7 +120,7 @@ describe('PlatformCallbacks:object-exists', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(BadRequestException);
+    expect(exception).toBeInstanceOf(BadRequestException);
   });
 
   it('should throw an exception if data path is not valid', async () => {
@@ -141,6 +142,6 @@ describe('PlatformCallbacks:object-exists', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(BadRequestException);
+    expect(exception).toBeInstanceOf(BadRequestException);
   });
 });

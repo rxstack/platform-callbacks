@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {transform} from '../src';
@@ -21,7 +22,7 @@ describe('PlatformCallbacks:transform', () => {
     apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(data);
     await transform(Task, {groups: ['group_id', 'group_name']})(apiEvent);
-    apiEvent.getData()['id'].should.equal('task-1');
-    apiEvent.getData()['name'].should.equal('task-name');
+    expect(apiEvent.getData()['id']).toBe('task-1');
+    expect(apiEvent.getData()['name']).toBe('task-name');
   });
 });

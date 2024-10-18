@@ -1,6 +1,7 @@
 import {MethodNotAllowedException} from '@rxstack/exceptions';
 import {OperationEventsEnum} from '@rxstack/platform';
 import {restrictToOperations} from '../../src/utils';
+import {describe, expect, it} from '@jest/globals';
 
 describe('PlatformCallbacks:utils:restrict-to-operations', () => {
   it('should pass', async () => {
@@ -14,6 +15,6 @@ describe('PlatformCallbacks:utils:restrict-to-operations', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(MethodNotAllowedException);
+    expect(exception).toBeInstanceOf(MethodNotAllowedException);
   });
 });

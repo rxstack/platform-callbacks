@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it, beforeAll, afterAll} from '@jest/globals';
 import {Request} from '@rxstack/core';
 import {BadRequestException} from '@rxstack/exceptions';
 import {validate} from '../src';
@@ -23,8 +24,8 @@ describe('PlatformCallbacks:validate', () => {
     } catch (e) {
       exception = e;
     }
-    exception.statusCode.should.be.equal(400);
-    exception.data.errors.length.should.be.equal(3);
+    expect(exception.statusCode).toBe(400);
+    expect(exception.data.errors.length).toBe(3);
   });
 
   it('should validate with errors on array', async () => {
@@ -40,8 +41,8 @@ describe('PlatformCallbacks:validate', () => {
       exception = e;
     }
 
-    exception.statusCode.should.be.equal(400);
-    exception.data.errors.length.should.be.equal(3);
+    expect(exception.statusCode).toBe(400);
+    expect(exception.data.errors.length).toBe(3);
   });
 
   it('should validate without errors', async () => {
@@ -54,6 +55,6 @@ describe('PlatformCallbacks:validate', () => {
       completed: false
     };
     await validate(TaskModel)(apiEvent);
-    request.body.id.should.be.equal('task-1');
+    expect(request.body.id).toBe('task-1')
   });
 });

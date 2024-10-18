@@ -5,7 +5,7 @@ import {NoopService} from '../shared/noop.service';
 export class UserService extends NoopService {
   lastCriteria: Object;
 
-  async findOne(criteria: Object): Promise<any> {
+  async findOne(criteria: any): Promise<any> {
     this.lastCriteria = criteria;
     const id = criteria['id']['$eq'];
     switch (id) {

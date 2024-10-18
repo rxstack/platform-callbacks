@@ -1,4 +1,5 @@
 import {getSource} from '../../src/index';
+import {describe, expect, it} from '@jest/globals';
 import {
   OperationEvent,
   OperationEventsEnum
@@ -16,7 +17,7 @@ describe('PlatformCallbacks:utils:get-source', () => {
     const event = new OperationEvent(request, injector, app_create_metadata);
     event.eventType = OperationEventsEnum.PRE_EXECUTE;
     const source = getSource(event);
-    JSON.stringify(source).should.be.equal(JSON.stringify(request.body));
+    expect(JSON.stringify(source)).toBe(JSON.stringify(request.body));
   });
 
   it('should get from event.getData', async () => {
@@ -25,6 +26,6 @@ describe('PlatformCallbacks:utils:get-source', () => {
     event.eventType = OperationEventsEnum.POST_EXECUTE;
     event.setData({'id': 'test'});
     const source = getSource(event);
-    JSON.stringify(source).should.be.equal(JSON.stringify(event.getData()));
+    expect(JSON.stringify(source)).toBe(JSON.stringify(event.getData()));
   });
 });

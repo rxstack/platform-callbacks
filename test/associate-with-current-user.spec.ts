@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it} from '@jest/globals';
 import { Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_create_metadata} from './mocks/shared/app.metadata';
@@ -18,7 +19,7 @@ describe('PlatformCallbacks:associate-with-current-user', () => {
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = {};
     await associateWithCurrentUser({idField: 'username'})(apiEvent);
-    request.body['userId'].should.be.equal('admin');
+    expect(request.body['userId']).toBe('admin');
   });
 
   it('should associate with current user on array of objects', async () => {
@@ -28,6 +29,6 @@ describe('PlatformCallbacks:associate-with-current-user', () => {
     apiEvent.eventType = OperationEventsEnum.PRE_EXECUTE;
     request.body = [{}, {}];
     await associateWithCurrentUser({idField: 'username'})(apiEvent);
-    _.forEach(request.body, (item) => item['userId'].should.be.equal('admin'));
+    _.forEach(request.body, (item) => expect(item['userId']).toBe('admin'));
   });
 });

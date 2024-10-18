@@ -1,11 +1,12 @@
 import {getProperty} from '../../src/index';
 import {BadRequestException} from '@rxstack/exceptions';
+import {describe, expect, it} from '@jest/globals';
 
 describe('PlatformCallbacks:utils:get-property', () => {
 
   it('should get property', async () => {
     const data = {'id': 'test'};
-    getProperty(data, 'id').should.be.equal('test');
+    expect(getProperty(data, 'id')).toBe('test');
   });
 
   it('should throw BadRequestException', async () => {
@@ -15,6 +16,6 @@ describe('PlatformCallbacks:utils:get-property', () => {
     } catch (e) {
       exception = e;
     }
-    exception.should.be.instanceOf(BadRequestException);
+    expect(exception).toBeInstanceOf(BadRequestException);
   });
 });

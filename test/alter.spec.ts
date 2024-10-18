@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import {describe, expect, it} from '@jest/globals';
 import {Request} from '@rxstack/core';
 import {OperationEvent, OperationEventsEnum} from '@rxstack/platform';
 import {app_get_metadata} from './mocks/shared/app.metadata';
@@ -17,7 +18,7 @@ describe('PlatformCallbacks:alter', () => {
     event.eventType = OperationEventsEnum.POST_EXECUTE;
     event.setData(_.cloneDeep(dataObj1));
     await alter('pick', ['name'])(event);
-    Object.keys(event.getData()).length.should.equal(1);
+    expect(Object.keys(event.getData()).length).toBe(1);
   });
 
   it('should keep properties in an array of objects', async () => {
@@ -26,9 +27,9 @@ describe('PlatformCallbacks:alter', () => {
     apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(dataArray1));
     await alter('pick', ['name', 'user.fname'])(apiEvent);
-    apiEvent.getData<Object[]>().forEach(v => {
-      Object.keys(v).length.should.equal(2);
-      Object.keys(v['user']).length.should.equal(1);
+    apiEvent.getData<Object[]>().forEach((v: any) => {
+      expect(Object.keys(v).length).toBe(2);
+      expect(Object.keys(v['user']).length).toBe(1);
     });
   });
 
@@ -38,7 +39,8 @@ describe('PlatformCallbacks:alter', () => {
     apiEvent.eventType = OperationEventsEnum.POST_EXECUTE;
     apiEvent.setData(_.cloneDeep(dataObj1));
     await alter('omit', ['name', 'user.fname', 'posts'])(apiEvent);
-    Object.keys(apiEvent.getData()).length.should.equal(2);
-    Object.keys(apiEvent.getData()['user']).length.should.equal(1);
+    const data: any = apiEvent.getData();
+    expect(Object.keys(apiEvent.getData()).length).toBe(2);
+    expect(Object.keys(data['user']).length).toBe(1);
   });
 });

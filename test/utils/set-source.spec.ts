@@ -17,7 +17,7 @@ describe('PlatformCallbacks:utils:set-source', () => {
     const event = new OperationEvent(request, injector, app_create_metadata);
     event.eventType = OperationEventsEnum.PRE_EXECUTE;
     setSource(event, 'new data');
-    request.body.should.equal('new data');
+    expect(request.body).toBe('new data');
   });
 
   it('should set data', async () => {
@@ -26,6 +26,6 @@ describe('PlatformCallbacks:utils:set-source', () => {
     event.eventType = OperationEventsEnum.POST_EXECUTE;
     event.setData('data');
     setSource(event, 'new data');
-    event.getData().should.equal('new data');
+    expect(event.getData()).toBe('new data');
   });
 });
